@@ -1,0 +1,8 @@
+# This file allows processes on the machine with id c76f6c7332c486d041b6528b51a0ef02 using 
+# display raspberrypi:1 to find the D-Bus session bus with the below address.
+# If the DBUS_SESSION_BUS_ADDRESS environment variable is set, it will
+# be used rather than this file.
+# See "man dbus-launch" for more details.
+DBUS_SESSION_BUS_ADDRESS=unix:abstract=/tmp/dbus-cf4sHkT3Hc,guid=70c5e938d365b2ef88233f3451ef75af
+DBUS_SESSION_BUS_PID=2319
+DBUS_SESSION_BUS_WINDOWID=4194305

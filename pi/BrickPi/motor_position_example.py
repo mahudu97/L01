@@ -16,7 +16,7 @@ motorParams.feedForwardGain = 255/20.0
 motorParams.minPWM = 18.0
 motorParams.pidParameters.minOutput = -255
 motorParams.pidParameters.maxOutput = 255
-motorParams.pidParameters.k_p = 100.0
+motorParams.pidParameters.k_p = 200.0
 motorParams.pidParameters.k_i = 0.0
 motorParams.pidParameters.k_d = 0.0
 

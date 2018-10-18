@@ -363,7 +363,7 @@ bool Interface::setMotorAngleControllerParameters(
   if (motorAngleControllerParameters.maxRotationSpeed < 0.0) {
     return false;
   }
-  motorAngleControllerParameters_[motorPort] = motorAngleControllerParameters; 
+  motorAngleControllerParameters_[motorPort] = motorAngleControllerParameters;
   pidControllers_[motorPort].setParamteters(
       motorAngleControllerParameters.pidParameters);
   return true;
@@ -1120,7 +1120,7 @@ double Interface::deadbandCompensatedPwm(unsigned char motorPort, double pwm)
     if (pwm<-1.0e-12) return -1.0/(4.0*minPwm)*pwm*pwm-minPwm;
   }
   return 0.0;
-  //return ((speedReference>0) - (speedReference<0)) * motorAngleControllerParameters_[motorPort].minPWM 
+  //return ((speedReference>0) - (speedReference<0)) * motorAngleControllerParameters_[motorPort].minPWM
   //    + motorAngleControllerParameters_[motorPort].feedForwardGain * speedReference;
 }
 
@@ -1138,7 +1138,7 @@ bool Interface::controlMotors(timestamp_t timestamp)
 
   if(loggingEnabled)
   {
-    logFile << std::setprecision(7) << (double)timestamp*1.0e-9 << "\t";
+    logFile << std::setprecision(7) << (double)timestamp*1.0e-9 << ",";
   }
 
   for (size_t i = 0; i < 4; ++i) {
@@ -1164,9 +1164,9 @@ bool Interface::controlMotors(timestamp_t timestamp)
         if(loggingEnabled)
         {
           logFile << std::setprecision(9)
-                  << filteredAngleReferences_[i].load() 
-                  << "\t" << motorAngles_[i] 
-                  << "\t";
+                  << filteredAngleReferences_[i].load()
+                  << "," << motorAngles_[i]
+                  << ",";
         }
 
         // check if reference velocity was reached
@@ -1215,9 +1215,9 @@ bool Interface::controlMotors(timestamp_t timestamp)
         if(loggingEnabled)
         {
           logFile << std::setprecision(9)
-                  << filteredAngleReferences_[i].load() 
-                  << "\t" << motorAngles_[i] 
-                  << "\t";
+                  << filteredAngleReferences_[i].load()
+                  << "," << motorAngles_[i]
+                  << ",";
         }
 
         // check if reference velocity was reached
@@ -1261,7 +1261,7 @@ bool Interface::controlMotors(timestamp_t timestamp)
       }
       default:
         break;
-    }    
+    }
   }
   if(loggingEnabled)
   {
@@ -1310,7 +1310,7 @@ bool Interface::updateSensorValues(bool getUltrasonic, timestamp_t timestamp)
   boost::lock_guard<boost::mutex> l(sensMutex_);
   for (int i = 0; i < 4; i++) {
     SensorType type = sensorTypes_[i];
-    if(type!=SENSOR_ULTRASONIC || (type==SENSOR_ULTRASONIC && getUltrasonic)) {      
+    if(type!=SENSOR_ULTRASONIC || (type==SENSOR_ULTRASONIC && getUltrasonic)) {
     //if (BrickPi.Sensor[i] >= 0) {
       sensorValues_[i] = sensorValue_t(BrickPi.Sensor[i], timestamp);
     }

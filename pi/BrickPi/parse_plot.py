@@ -39,9 +39,12 @@ if __name__ == "__main__":
     # split file by new line
     lines = open(sys.argv[1]).read().splitlines()
     k = sys.argv[1].split("_")
-    k_p = k[1]
-    k_i = k[2]
-    k_d = k[3][:-4]
+    k_pr = k[1]
+    k_ir = k[2]
+    k_dr = k[3]
+    k_pl = k[4]
+    k_il = k[5]
+    k_dl = k[6][:-4]
 
     # Instantiate Record obj
     records = Record()
@@ -54,33 +57,33 @@ if __name__ == "__main__":
 
     # plot rm
     plt.figure(1)
-    plt.title("Right motor reference and actual angle: Kp="+k_p+", Ki="+k_i+", Kd="+k_d)
+    plt.title("Right motor reference and actual angle: Kp="+k_pr+", Ki="+k_ir+", Kd="+k_dr)
     plt.xlabel("time (ns)")
     plt.ylabel("angle (radians)")
     plt.plot(records.time, records.ref_rm, label = "ref")
     plt.plot(records.time, records.actual_rm, label = "actual")
     plt.legend()
-    pylab.savefig("rm_raa_"+k_p+"_"+k_i+"_"+k_d+".png", bbox_inches = "tight")
+    pylab.savefig("rm_raa_"+k_pr+"_"+k_ir+"_"+k_dr+".png", bbox_inches = "tight")
     plt.figure(2)
-    plt.title("Right motor absolute error: Kp="+k_p+", Ki="+k_i+", Kd="+k_d)
+    plt.title("Right motor absolute error: Kp="+k_pr+", Ki="+k_ir+", Kd="+k_dr)
     plt.xlabel("time (ns)")
     plt.ylabel("angle (radians)")
     plt.plot(records.time, records.diff_rm)
-    pylab.savefig("rm_err_"+k_p+"_"+k_i+"_"+k_d+".png", bbox_inches = "tight")
+    pylab.savefig("rm_err_"+k_pr+"_"+k_ir+"_"+k_dr+".png", bbox_inches = "tight")
 
     # plot lm
     plt.figure(3)
-    plt.title("Left motor reference and actual angle: Kp="+k_p+", Ki="+k_i+", Kd="+k_d)
+    plt.title("Left motor reference and actual angle: Kp="+k_pl+", Ki="+k_il+", Kd="+k_dl)
     plt.xlabel("time (ns)")
     plt.ylabel("angle (radians)")
     plt.plot(records.time, records.ref_lm, label = "ref")
     plt.plot(records.time, records.actual_lm, label = "actual")
     plt.legend()
-    pylab.savefig("lm_raa_"+k_p+"_"+k_i+"_"+k_d+".png", bbox_inches = "tight")
+    pylab.savefig("lm_raa_"+k_pl+"_"+k_il+"_"+k_dl+".png", bbox_inches = "tight")
     plt.figure(4)
-    plt.title("Left motor absolute error: Kp="+k_p+", Ki="+k_i+", Kd="+k_d)
+    plt.title("Left motor absolute error: Kp="+k_pl+", Ki="+k_il+", Kd="+k_dl)
     plt.xlabel("time (ns)")
     plt.ylabel("angle (radians)")
     plt.plot(records.time, records.diff_lm)
-    pylab.savefig("lm_err_"+k_p+"_"+k_i+"_"+k_d+".png", bbox_inches = "tight")
+    pylab.savefig("lm_err_"+k_pl+"_"+k_il+"_"+k_dl+".png", bbox_inches = "tight")
     plt.show()

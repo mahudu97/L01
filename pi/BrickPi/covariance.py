@@ -7,13 +7,13 @@ x = []
 y = []
 
 #Open File
-file = open('input.txt', 'r')
+file = open('square_test/results.txt', 'r')
 
 #Read file into array
 for line in file:
 	fields = line.split(" ")
-	x.append(int(fields[0]))
-	y.append(int(fields[1]))
+	x.append(float(fields[0]))
+	y.append(float(fields[1]))
 
 #Calculate the mean values
 x_bar = float(sum(x))/len(x)

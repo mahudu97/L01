@@ -61,14 +61,14 @@ def forward( dist ):
 	angle = radMove*dist
 	print("Moving forward by ", dist, "cm")
 	interface.increaseMotorAngleReferences(motors,[angle,angle])
-	return true
+	return True
 
 def backward (dist):
     #convert dist in cm to revolutions of the wheels in rad
 	angle = radMove*dist
 	print ("Moving backward by ", dist, "cm")
 	interface.increaseMotorAngleReferences(motors,[-angle,-angle])
-	return true
+	return True
 
 # TURNING FUNCTIONS
 
@@ -77,14 +77,14 @@ def left_90 (quantity):
 	angle = radTurn*quantity
 	print ("Rotating left by ", quantity*90, "degrees")
 	interface.increaseMotorAngleReferences(motors,[angle,-angle])
-	return true
+	return True
 
 def right_90 (quantity):
     #convert quantity (of right 90 rotations about center) to revolutions of the wheels in rad
 	angle = radTurn*quantity
 	print ("Rotating right by ", quantity*90, "degrees")
 	interface.increaseMotorAngleReferences(motors,[-angle,angle])
-	return true
+	return True
 
 #Needs to be tested:
 def turnLeft():
@@ -92,11 +92,11 @@ def turnLeft():
 	angle = radTurn*2
 	print ("Turning left")
 	interface.increaseMotorAngleReferences(motors,[angle,0])
-	return true
+	return True
 
 def turnRight():
     #convert quantity (of right 90 rotations about right wheel) to revolutions of the wheels in rad
 	angle = radTurn*2
 	print ("Turning right")
 	interface.increaseMotorAngleReferences(motors,[0,angle])
-	return true
+	return True

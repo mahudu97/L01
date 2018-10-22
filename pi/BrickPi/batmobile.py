@@ -17,8 +17,8 @@ ki_right = 700.0
 kd_right = 500.0
 PWM_right= 18.0
 
-radTurn = 4.1575
-radMove = 0.2876898591
+radTurn = 4.07435
+radMove = 0.29488210557
 
 
 # SETTING MOTOR PARAMS

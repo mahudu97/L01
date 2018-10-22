@@ -1,26 +1,21 @@
 import brickpi
 import time
 
-import system
-
-#We expect 7 command line arguments. The script name and 2*3 PID - 3 for each motorAngleReferencesReached
-
-if len(sys.argv) < 7 :
-	print "Program expects command line arguments with PID values for both motors. Should look like script.py pr ir dr pl il dl"
-	exit()
-
+import sys
 
 interface=brickpi.Interface()
 interface.initialize()
 
 motors = [0,3]
 
-pr = sys.argv[1]
-ir = sys.argv[2]
-dr = sys.argv[3]
-pl = sys.argv[4]
-il = sys.argv[5]
-dl = sys.argv[6]
+
+
+pr = 420
+dr = 31.5
+ir = 700
+pl = 420
+dl = 31.5
+il = 650
 
 interface.motorEnable(motors[0])
 interface.motorEnable(motors[1])
@@ -30,7 +25,7 @@ motorParams_right = interface.MotorAngleControllerParameters()
 motorParams_right.maxRotationAcceleration = 6.0
 motorParams_right.maxRotationSpeed = 12.0
 motorParams_right.feedForwardGain = 255/20.0
-motorParams_right.minPWM = 18.0
+motorParams_right.minPWM = 15.0
 motorParams_right.pidParameters.minOutput = -255
 motorParams_right.pidParameters.maxOutput = 255
 motorParams_right.pidParameters.k_p = pr
@@ -41,7 +36,7 @@ motorParams_left = interface.MotorAngleControllerParameters()
 motorParams_left.maxRotationAcceleration = 6.0
 motorParams_left.maxRotationSpeed = 12.0
 motorParams_left.feedForwardGain = 255/20.0
-motorParams_left.minPWM = 18.0
+motorParams_left.minPWM = 15.0
 motorParams_left.pidParameters.minOutput = -255
 motorParams_left.pidParameters.maxOutput = 255
 motorParams_left.pidParameters.k_p = pl
@@ -52,26 +47,30 @@ interface.setMotorAngleControllerParameters(motors[0],motorParams_right)
 interface.setMotorAngleControllerParameters(motors[1],motorParams_left)
 
 
-while True:
 
-	
-	logFile= "ATL_" + str(pr)+"_" + str(ir)+ "_" +str(dr)+ "_" +str(pl)+ "_" +str(il)+ "_" +str(dl)+".txt"
-	interface.startLogging(logFile)
+logFile= "ATL_" + str(int(pr))+"_" + str(int(ir))+ "_" +str(int(dr))+ "_" +str(int(pl))+ "_" +str(int(il))+ "_" +str(int(dl))+".txt"
+interface.startLogging(logFile)
 
-	#angle = float(input("Enter an angle (rad): "))
-	angle = 6.2832 #2pi const
+#angle = float(input("Enter an angle (rad): "))
+angle = 20.63 #2pi const
 
-	interface.increaseMotorAngleReferences(motors,[angle,-angle])
+interface.increaseMotorAngleReferences(motors,[angle,-angle])
+count = 0
+while not interface.motorAngleReferencesReached(motors) :
+	#timer to stop loop
+	count+=1
 
-	while not interface.motorAngleReferencesReached(motors) :
-		motorAngles = interface.getMotorAngles(motors)
-		if motorAngles :
-			print "Motor angles: ", motorAngles[0][0], ", ", motorAngles[1][0]
-		time.sleep(0.1)
+	motorAngles = interface.getMotorAngles(motors)
+	if motorAngles :
+		print "Motor angles: ", motorAngles[0][0], ", ", motorAngles[1][0]
+	time.sleep(0.01)
 
-	print "Destination reached!"
+	#if count>500:
+	#	break
 
-interface.stopLogging(logFile)
+print "Destination reached!"
+
+interface.stopLogging()
 
 
 

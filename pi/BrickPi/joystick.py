@@ -2,28 +2,28 @@ import batmobile
 import keyboard as key 
 
 while true:
-
+	entry = input("Enter a letter: ")
     try:
-        if key.is_pressed('w'):
+        if entry == ('w'):
             batmobile.forward(2)
-            break
-        if key.is_pressed('s'):
+            continue
+        if entry == ('s'):
             batmobile.backward(2)
-            break
-        if key.is_pressed('a'):
+            continue
+        if entry == ('a'):
             batmobile.left_90(1)
-            break
-        if key.is_pressed('d'):
+           continue
+        if entry == ('d'):
             batmobile.right_90()
-            break
-        if key.is_pressed('q'):
+            continue
+        if entry == ('q'):
             batmobile.turnLeft()
-            break
-        if key.is_pressed('e'):
+            continue
+        if entry == ('e'):
             batmobile.turnRight()
-            break
+            continue
     except:
-        if key.is_pressed('k'):
+        if entry == ('k'):
             break
 
 

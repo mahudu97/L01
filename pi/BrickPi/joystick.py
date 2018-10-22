@@ -22,9 +22,9 @@ while true:
         if key.is_pressed('e'):
             batmobile.turnRight()
             break
-        except:
-            if key.is_pressed('k'):
-                break
+    except:
+        if key.is_pressed('k'):
+            break
 
 
 print "++++++++++++++++++++++++++++++++++++++++++++++++\n\nJoystick has been terminated. Run again to use\n\n++++++++++++++++++++++++++++++++++++++++++++++++"

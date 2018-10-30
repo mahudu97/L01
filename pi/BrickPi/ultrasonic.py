@@ -6,7 +6,7 @@ bat.interface.sensorEnable(bat.us_port, bat.brickpi.SensorType.SENSOR_ULTRASONIC
 
 distance = 30
 
-p=5
+p=0.2
 
 while True:
 	# returns tuple 

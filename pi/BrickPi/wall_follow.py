@@ -1,8 +1,6 @@
-import brickpi
+
 import time
 import batmobile
-
-interface=brickpi.Interface()
 
 
 #print "I got here at least"
@@ -20,7 +18,7 @@ while True:
 	
 	#calculate where I am
 	
-	usReading = interface.getSensorValue(3)
+	usReading = batmobile.interface.getSensorValue(3)
 	#print usReading
 	#print usReading[0]
 	distance_error =0

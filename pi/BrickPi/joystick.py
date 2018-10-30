@@ -19,10 +19,10 @@ def main():
 			if entry == ('d'): #^[[C
 				bat.right_90(1)
 				continue
-			if entry == ('q') or: 
+			if entry == ('q'): 
 				bat.turnLeft()
 				continue
-			if entry == ('e') or:
+			if entry == ('e'):
 				bat.turnRight()
 				continue
 

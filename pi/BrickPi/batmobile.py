@@ -20,6 +20,10 @@ PWM_right= 18.0
 radTurn = 4.07435
 radMove = 0.29488210557
 
+# SETTING SENSOR PARAMS
+touch_port [0,1]
+interface.sensorEnable(touch_port[0], brickpi.SensorType.SENSOR_TOUCH)
+interface.sensorEnable(touch_port[1], brickpi.SensorType.SENSOR_TOUCH)
 
 # SETTING MOTOR PARAMS
 motors = [0,3]

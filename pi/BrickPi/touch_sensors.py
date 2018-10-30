@@ -10,7 +10,8 @@ while not interface.motorAngleReferencesReached(motors) or (interface.getSensorV
 		batmobile.backward(20)
 		time.sleep(2.5)
 		##turn Left
-		batmobile.left_90(1.5)
+		batmobile.turnLeft(-1)
+		time.sleepd(2.5)
 
 	# Bump on the left side
 	if(interface.getSensorValue(touch_port[1]) == 1):
@@ -18,7 +19,7 @@ while not interface.motorAngleReferencesReached(motors) or (interface.getSensorV
 		batmobile.backward(20)
 		time.sleep(2.5)
 		##Turn Right
-		batmobile.right_90(1.5)		
+		batmobile.turnRight(-1)		
 		time.sleep(2.5)
 	
 

@@ -1,3 +1,4 @@
+
 import brickpi
 import time
 
@@ -5,20 +6,21 @@ interface=brickpi.Interface()
 interface.initialize()
 
 ###########################SETTERS######################################
-maxACC = 6.0
+maxACC = 12.5
+maxVEL = 15.0
 
-kp_left = 420.0
-ki_left = 650.0
-kd_left = 200.0
+kp_left = 390.0
+ki_left = 550.0
+kd_left = 350.0
 PWM_left= 18.0
 
 kp_right = 420.0
-ki_right = 700.0
-kd_right = 500.0
+ki_right = 575.0
+kd_right = 37.5
 PWM_right= 18.0
 
-radTurn = 4.07435
-radMove = 0.29488210557
+radTurn = 4.16960098
+radMove = 0.29937269601
 
 # SETTING SENSOR PARAMS
 touch_port [0,1]
@@ -104,3 +106,4 @@ def turnRight(quantity):
 	print ("Turning right")
 	interface.increaseMotorAngleReferences(motors,[0,angle])
 	return True
+	

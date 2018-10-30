@@ -1,21 +1,26 @@
-import brickpi
+import batmobile as bat
 import time
 
-interface=brickpi.Interface()
-interface.initialize()
 
-port = 3 # port which ultrasoic sensor is plugged in to
+bat.interface.sensorEnable(bat.us_port, bat.brickpi.SensorType.SENSOR_ULTRASONIC)
 
-interface.sensorEnable(port, brickpi.SensorType.SENSOR_ULTRASONIC);
+distance = 30
+
+p=5
 
 while True:
-	usReading = interface.getSensorValue(port)
+	# returns tuple 
+	usReading = bat.interface.getSensorValue(bat.us_port)
+
+	speed = -p*(distance - usReading[0])
+
+	bat.keepRolling(speed,speed)
 
 	if usReading :
 		print usReading
 	else:
 		print "Failed US reading"
 
-	time.sleep(2)
+	time.sleep(0.05)
 
-interface.terminate()
+bat.interface.terminate()

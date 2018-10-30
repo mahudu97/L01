@@ -23,6 +23,7 @@ radMove = 0.29937269601
 
 #SETTING SENSOR PARAMS
 touch_port = [1,2]
+# touch_port = [left,right]
 interface.sensorEnable(touch_port[0], brickpi.SensorType.SENSOR_TOUCH)
 interface.sensorEnable(touch_port[1], brickpi.SensorType.SENSOR_TOUCH)
 
@@ -101,16 +102,16 @@ def right_90 (quantity):
 	return True
 
 #Needs to be tested:
-def turnLeft():
+def turnLeft(quantity):
     #convert quantity (of left 90 rotations about left wheel) to revolutions of the wheels in rad
-	angle = radTurn*2
+	angle = radTurn*2*quantity
 	print ("Turning left")
 	interface.increaseMotorAngleReferences(motors,[angle,0])
 	return True
 
-def turnRight():
+def turnRight(quantity):
     #convert quantity (of right 90 rotations about right wheel) to revolutions of the wheels in rad
-	angle = radTurn*2
+	angle = radTurn*2*quantity
 	print ("Turning right")
 	interface.increaseMotorAngleReferences(motors,[0,angle])
 	return True

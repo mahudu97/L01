@@ -1,48 +1,45 @@
-import brickpi
 import time
 import batmobile
 
-# interface = brickpi.Interface()
-
-
+cruise = 0.5*batmobile.maxVEL
 
 while True:
-	
-	batmobile.keepRolling(0.1)
-	
-	if(batmobile.interface.getSensorValue(batmobile.touch_port[1]) == 1) and (batmobile.interface.getSensorValue(batmobile.touch_port[0]) == 1) :
-		print ("both")
-		batmobile.backward(20)
-		time.sleep(2.5)
-		##Turn Right
-		batmobile.turnRight(-1)		
-		time.sleep(2.5)
-		continue
-	
-	# Bump on the right side
-	if(batmobile.interface.getSensorValue(batmobile.touch_port[0]) == 1):
-		print ("left")
-		batmobile.backward(20)
-		time.sleep(2.5)
-		##turn Left
-		batmobile.turnLeft(-1)
-		time.sleep(2.5)
-		continue
+	# get touch sensor values
+	pressed0 = batmobile.interface.getSensorValue(batmobile.touch_port[0])
+	pressed1 = batmobile.interface.getSensorValue(batmobile.touch_port[1])
 
-	# Bump on the left side
-	if(batmobile.interface.getSensorValue(batmobile.touch_port[1]) == 1):
-		###
-		print ("right")
-		batmobile.backward(20)
-		time.sleep(2.5)
-		##Turn Right
-		batmobile.turnRight(-1)		
-		time.sleep(2.5)
-		continue
-	
-	
-	
+	if pressed0[0] or pressed1[0]:
+		batmobile.interface.setMotorPwm(batmobile.motors[0],0)
+		batmobile.interface.setMotorPwm(batmobile.motors[1],0)
+		if pressed0[0] and pressed1[0]:
+			print ("both")
+			batmobile.backward(20)
+			time.sleep(1.5)
+			##Turn Around
+			batmobile.right_90(-2)
+			time.sleep(1.5)
+
+		# Bump on the left side
+		elif pressed0[0]:
+			print ("left")
+			batmobile.backward(20)
+			time.sleep(1.5)
+			#reverse
+			batmobile.turnLeft(-1)
+			time.sleep(1.5)
+			continue
+
+		# Bump on the right side
+		elif pressed1[0]:
+			print ("right")
+			batmobile.backward(20)
+			time.sleep(1.5)
+			##Turn Right
+			batmobile.turnRight(-1)
+			time.sleep(1.5)
+	else:
+		batmobile.keepRolling(cruise, cruise)
 
 
 
-interface.terminate()
+batmobile.interface.terminate()

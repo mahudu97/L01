@@ -1,4 +1,3 @@
-
 import brickpi
 import time
 
@@ -11,7 +10,7 @@ maxVEL = 15.0
 
 kp_left = 390.0
 ki_left = 550.0
-kd_left = 350.0
+kd_left = 35.0
 PWM_left= 18.0
 
 kp_right = 420.0
@@ -22,10 +21,14 @@ PWM_right= 18.0
 radTurn = 4.16960098
 radMove = 0.29937269601
 
-# SETTING SENSOR PARAMS
-touch_port [0,1]
+#SETTING SENSOR PARAMS
+touch_port = [1,2]
 interface.sensorEnable(touch_port[0], brickpi.SensorType.SENSOR_TOUCH)
 interface.sensorEnable(touch_port[1], brickpi.SensorType.SENSOR_TOUCH)
+
+
+us_port = 3
+interface.sensorEnable(us_port, brickpi.SensorType.SENSOR_ULTRASONIC)
 
 # SETTING MOTOR PARAMS
 motors = [0,3]
@@ -35,7 +38,7 @@ interface.motorEnable(motors[1])
 
 motorParams_left = interface.MotorAngleControllerParameters()
 motorParams_left.maxRotationAcceleration = maxACC
-motorParams_left.maxRotationSpeed = 12.0
+motorParams_left.maxRotationSpeed = maxVEL
 motorParams_left.feedForwardGain = 255/20.0
 motorParams_left.minPWM = PWM_left
 motorParams_left.pidParameters.minOutput = -255
@@ -46,7 +49,7 @@ motorParams_left.pidParameters.k_d = kd_left
 
 motorParams_right = interface.MotorAngleControllerParameters()
 motorParams_right.maxRotationAcceleration = maxACC
-motorParams_right.maxRotationSpeed = 12.0
+motorParams_right.maxRotationSpeed = maxVEL
 motorParams_right.feedForwardGain = 255/20.0
 motorParams_right.minPWM = PWM_right
 motorParams_right.pidParameters.minOutput = -255
@@ -76,6 +79,11 @@ def backward (dist):
 	interface.increaseMotorAngleReferences(motors,[-angle,-angle])
 	return True
 
+
+def keepRolling(speedR,speedL):
+	interface.setMotorRotationSpeedReferences(motors,[speedR,speedL])
+	return True
+
 # TURNING FUNCTIONS
 
 def left_90 (quantity):
@@ -93,17 +101,18 @@ def right_90 (quantity):
 	return True
 
 #Needs to be tested:
-def turnLeft(quantity):
+def turnLeft():
     #convert quantity (of left 90 rotations about left wheel) to revolutions of the wheels in rad
-	angle = radTurn*2*quantity
+	angle = radTurn*2
 	print ("Turning left")
 	interface.increaseMotorAngleReferences(motors,[angle,0])
 	return True
 
-def turnRight(quantity):
+def turnRight():
     #convert quantity (of right 90 rotations about right wheel) to revolutions of the wheels in rad
-	angle = radTurn*2*quantity
+	angle = radTurn*2
 	print ("Turning right")
 	interface.increaseMotorAngleReferences(motors,[0,angle])
 	return True
-	
+
+

@@ -1,7 +1,10 @@
 import time
 import batmobile
 
-cruise = 0.5*batmobile.maxVEL
+cruise = batmobile.maxVEL
+
+batmobile.keepRolling(cruise, cruise)
+
 
 while True:
 	# get touch sensor values
@@ -16,29 +19,51 @@ while True:
 			batmobile.backward(20)
 			time.sleep(1.5)
 			##Turn Around
-			batmobile.right_90(-2)
+			batmobile.right_90(2)
 			time.sleep(1.5)
+			batmobile.keepRolling(cruise, cruise)
+
+
 
 		# Bump on the left side
 		elif pressed0[0]:
-			print ("left")
-			batmobile.backward(20)
-			time.sleep(1.5)
-			#reverse
-			batmobile.turnLeft(-1)
-			time.sleep(1.5)
-			continue
+			if pressed1[0]:
+				print ("both")
+				batmobile.backward(20)
+				time.sleep(1.5)
+				##Turn Around
+				batmobile.right_90(2)
+				time.sleep(1.5)
+				batmobile.keepRolling(cruise, cruise)
+			else: 
+				print ("left")
+				batmobile.backward(20)
+				time.sleep(1.5)
+				#reverse
+				batmobile.turnLeft(-1)
+				time.sleep(1.5)
+				batmobile.keepRolling(cruise, cruise)
+
 
 		# Bump on the right side
 		elif pressed1[0]:
-			print ("right")
-			batmobile.backward(20)
-			time.sleep(1.5)
-			##Turn Right
-			batmobile.turnRight(-1)
-			time.sleep(1.5)
-	else:
-		batmobile.keepRolling(cruise, cruise)
+			if pressed0[0]:
+				print ("both")
+				batmobile.backward(20)
+				time.sleep(1.5)
+				##Turn Around
+				batmobile.right_90(2)
+				time.sleep(1.5)
+				batmobile.keepRolling(cruise, cruise)
+				
+			else:
+				print ("right")
+				batmobile.backward(20)
+				time.sleep(1.5)
+				##Turn Right
+				batmobile.turnRight(-1)
+				time.sleep(1.5)
+				batmobile.keepRolling(cruise, cruise)
 
 
 

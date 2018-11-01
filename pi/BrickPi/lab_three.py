@@ -17,7 +17,10 @@ error_e = 0
 error_f = 0
 error_g = 0
 mu = 0 # update with actual value
-sigma =0
+sigma_e = 0
+sigma_f = 0
+sigma_g = 0
+#different sigmas
 #random.gauss(mu, sigma) generates random number smapled from mean mu and SD sigma
 
 
@@ -28,17 +31,17 @@ for i in range(0. 3):
         L01.forward(10)
         time.sleep(3.5)
         for k in range(0, 99):
-            error_e = random.gauss(mu,sigma)
-            error_f = random.gauss(mu,sigma)
-            p_x[k] += (10 + error_e) * math.cos(theta)
-            p_y[k] += (10 + error_e) * math.sin(theta)
+            error_e = random.gauss(mu,sigma_e)
+            error_f = random.gauss(mu,sigma_f)
+            p_x[k] += (10 + error_e) * math.cos(p_theta[k])
+            p_y[k] += (10 + error_e) * math.sin(p_theta[k])
             p_theta[k] += error_f
-        print "drawParticles:" + str([p_x, p_y, p_theta])
-    L01.left_90(1)
+        print "drawParticles:" + str([p_x, p_y, p_theta])  # should print out the drawParticles
+    L01.left_90(1)                                         # did it in same way as testDraw
     time.sleep(2)
 
     for l in range (0,99):
-        error_g = random.gauss(mu,sigma)
+        error_g = random.gauss(mu,sigma_g)
         p_theta[k] += 90 + error_g
     print "drawParticles:" + str([p_x, p_y, p_theta])
 

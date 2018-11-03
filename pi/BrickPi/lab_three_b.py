@@ -45,26 +45,26 @@ def navigateToWaypoint( X, Y):
 
     L01.left_90(angleRotate/1.5708)
     time.sleep(2.5)
-    particles_rot = []
+    #particles_rot = []
     for k in range (100):
         error_g = random.gauss(mu,sigma_g)
         p_theta[k] += angleRotate + error_g
-        particles_rot.append((5*p_x[k], 5*p_y[k], p_theta[k]))
-    print "drawParticles:" + str(particles_rot)  # should print out the drawParticles
+    #   particles_rot.append((5*p_x[k], 5*p_y[k], p_theta[k]))
+    #print "drawParticles:" + str(particles_rot)  # should print out the drawParticles
         
  
 
     L01.forward(dist)
     time.sleep(dist*0.2)
-    particles = []
+    #particles = []
     for k in range(100):          #this code is only relevant for correction once a move has been logged
         error_e = random.gauss(mu,sigma_e)
         error_f = random.gauss(mu,sigma_f)
         p_x[k] += (dist + error_e) * math.cos(angleDest)
         p_y[k] += (dist + error_e) * math.sin(angleDest)
         p_theta[k] += error_f   
-        particles.append((5*p_x[k], 5*p_y[k], p_theta[k]))
-    print "drawParticles:" + str(particles)  # should print out the drawParticles
+    #    particles.append((5*p_x[k], 5*p_y[k], p_theta[k]))
+    #print "drawParticles:" + str(particles)  # should print out the drawParticles
         
     # now to update current guess of position
     estimate_x = 0.0

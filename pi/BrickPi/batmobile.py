@@ -5,17 +5,17 @@ interface=brickpi.Interface()
 interface.initialize()
 
 ###########################SETTERS######################################
-maxACC = 12.5
-maxVEL = 15.0
+maxACC = 6.0
+maxVEL = 12.0
 
-kp_left = 390.0
-ki_left = 550.0
-kd_left = 35.0
+kp_left = 400
+ki_left = 700
+kd_left = 30
 PWM_left= 18.0
 
-kp_right = 420.0
-ki_right = 575.0
-kd_right = 37.5
+kp_right = kp_left
+ki_right = ki_left
+kd_right = kd_left
 PWM_right= 18.0
 
 radTurn = 4.16960098
@@ -26,7 +26,6 @@ touch_port = [1,2]
 # touch_port = [left,right]
 interface.sensorEnable(touch_port[0], brickpi.SensorType.SENSOR_TOUCH)
 interface.sensorEnable(touch_port[1], brickpi.SensorType.SENSOR_TOUCH)
-
 
 us_port = 3
 interface.sensorEnable(us_port, brickpi.SensorType.SENSOR_ULTRASONIC)
@@ -82,7 +81,7 @@ def backward (dist):
 
 
 def keepRolling(speedR,speedL):
-	interface.setMotorRotationSpeedReferences(motors,[speedR,speedL])
+	interface.setMotorRotationSpeedReferences(motors,[speedL,speedR])
 	return True
 
 # TURNING FUNCTIONS

@@ -1,53 +1,84 @@
-import batmobile
+import batmobile as L01
 import time
 import random
 import math
 
-def average(w, array_in[]): #weighted average calculator
-    avg = 0
-    for a in range(0, 99):
-        avg += w * array_in[a]
-    return avg
 
-def navigateToWaypoint(float X, float Y):
-        #needs to do a turn then a move of correct distance
-
-L01 = batmobile
 NUMBER_OF_PARTICLES = 100
-p_x = [0] * NUMBER_OF_PARTICLES # At the start every particle has its intial coords as 0,0,0
-p_y = [0] * NUMBER_OF_PARTICLES
-p_theta = [0] * NUMBER_OF_PARTICLES
-weight = [1/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES # In an actual example these would be updated
+p_x = [0.0] * NUMBER_OF_PARTICLES # At the start every particle has its intial coords as 0,0,0
+p_y = [0.0] * NUMBER_OF_PARTICLES
+p_theta = [0.0] * NUMBER_OF_PARTICLES
+weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES # In an actual example these would be updated
 
-error_e = 0 #the errors, need to be generated each time called
-error_f = 0 #TODO: make these correct
-error_g = 0
+
 mu = 0 # update with actual value
-sigma_e = 0 #different sigmas
-sigma_f = 0 #random.gauss(mu, sigma) generates random number smapled from mean mu and SD sigma
-sigma_g = 0
+sigma_e = 0.037
+sigma_f = 0.037
+sigma_g = 0.021
 
-def main():
-    turn_angle = 0
-    distance = 0
-    current_x = 0
-    current_y = 0
-    while True: #enter input co-ords, rotate, move, REPEAT
-        w_x = raw_input("Enter X value of the waypoint: ")
-        w_y = raw_input("Enter Y value of the waypoint: ")
-        #the maths needs to go here
+estimate_theta = 0.0
+estimate_x = 0.0
+estimate_y = 0.0
 
-        for l in range (0,99):
-            error_g = random.gauss(mu,sigma_g)
-            p_theta[k] += 90 + error_g
-        for k in range(0, 99):          #this code is only relevant for correction once a move has been logged
-            error_e = random.gauss(mu,sigma_e)
-            error_f = random.gauss(mu,sigma_f)
-            p_x[k] += (10 + error_e) * math.cos(p_theta[k])
-            p_y[k] += (10 + error_e) * math.sin(p_theta[k])
-            p_theta[k] += error_f
+def navigateToWaypoint( X, Y):
+    global estimate_x
+    global estimate_y
+    global estimate_theta
+    global p_x
+    global p_y
+    global p_theta
+    global weights
+    global mu
+    global sigma_e
+    global sigma_f
+    global sigma_g
+    
+
+    print "Silly test " + str(estimate_x) +" "+ str(estimate_y) +" "+str(estimate_theta)
+    x_diff = X-estimate_x
+    y_diff = Y-estimate_y
+    dist = (x_diff**2 + y_diff**2)**0.5
+    angleDest = math.atan2(y_diff,x_diff) # returns an angle between - pi  and pi 
+
+    
+    angleRotate = angleDest - estimate_theta
+
+    L01.left_90(angleRotate/1.5708)
+    time.sleep(2.5)
+    particles_rot = []
+    for k in range (100):
+        error_g = random.gauss(mu,sigma_g)
+        p_theta[k] += angleRotate + error_g
+        particles_rot.append((5*p_x[k], 5*p_y[k], p_theta[k]))
+    print "drawParticles:" + str(particles_rot)  # should print out the drawParticles
+        
+ 
+
+    L01.forward(dist)
+    time.sleep(dist*0.2)
+    particles = []
+    for k in range(100):          #this code is only relevant for correction once a move has been logged
+        error_e = random.gauss(mu,sigma_e)
+        error_f = random.gauss(mu,sigma_f)
+        p_x[k] += (dist + error_e) * math.cos(angleDest)
+        p_y[k] += (dist + error_e) * math.sin(angleDest)
+        p_theta[k] += error_f   
+        particles.append((5*p_x[k], 5*p_y[k], p_theta[k]))
+    print "drawParticles:" + str(particles)  # should print out the drawParticles
+        
+    # now to update current guess of position
+    estimate_x = 0.0
+    estimate_y = 0.0
+    estimate_theta = 0.0
+    for i in range(100):
+        estimate_x += p_x[i]*weights[i]
+        estimate_y += p_y[i]*weights[i]
+        estimate_theta += p_theta[i]*weights[i]
+    #print "Silly test 2 " + str(estimate_x) +" "+ str(estimate_y) +" "+str(estimate_theta)
 
 
-X = average(weight[0], p_x) #currently the weights are all the same so can just say the first weight value
-Y = average(weight[0], p_y)
-batmobile.navigateToWaypoint(X, Y)
+while True: #enter input co-ords, rotate, move, REPEAT
+    w_x = float(input("Enter X value of the waypoint: "))*100
+    w_y = float(input("Enter Y value of the waypoint: "))*100
+    navigateToWaypoint(w_x, w_y)
+

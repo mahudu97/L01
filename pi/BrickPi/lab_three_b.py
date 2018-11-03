@@ -50,4 +50,4 @@ def main():
 
 X = average(weight[0], p_x) #currently the weights are all the same so can just say the first weight value
 Y = average(weight[0], p_y)
-navigateToWaypoint(X, Y)
+batmobile.navigateToWaypoint(X, Y)

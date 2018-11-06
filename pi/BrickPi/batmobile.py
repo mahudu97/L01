@@ -112,7 +112,7 @@ def turnRight(quantity):
     #convert quantity (of right 90 rotations about right wheel) to revolutions of the wheels in rad
 	angle = radTurn*2*quantity
 	print ("Turning right by ", round(quantity*90,3), "degrees")
-		interface.increaseMotorAngleReferences(motors,[0,angle])
+	interface.increaseMotorAngleReferences(motors,[0,angle])
 	return True
 
 

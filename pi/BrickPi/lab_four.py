@@ -2,7 +2,7 @@ import batmobile as L01
 import time
 import random
 import math
-import particleDataStructures as template
+import particleDataStructures as world
 
 NUMBER_OF_PARTICLES = 100
 p_x = [0.0] * NUMBER_OF_PARTICLES # At the start every particle has its intial coords as 0,0,0
@@ -21,9 +21,6 @@ estimate_x = 0.0
 estimate_y = 0.0
 
 
-#this is the function we need 3.1 of week 5 practical
-def calculate_likelihood(float x, float y, float theta, float z):
-
 
 def navigateToWaypoint( X, Y):
     global estimate_x
@@ -39,7 +36,7 @@ def navigateToWaypoint( X, Y):
     global sigma_g
 
 
-    print "Silly test " + str(estimate_x) +" "+ str(estimate_y) +" "+str(estimate_theta)
+    # print "Silly test " + str(estimate_x) +" "+ str(estimate_y) +" "+str(estimate_theta)
     x_diff = X-estimate_x
     y_diff = Y-estimate_y
     dist = (x_diff**2 + y_diff**2)**0.5
@@ -82,48 +79,25 @@ def navigateToWaypoint( X, Y):
     #print "Silly test 2 " + str(estimate_x) +" "+ str(estimate_y) +" "+str(estimate_theta)
 
 
-while True: #enter input co-ords, rotate, move, REPEAT
-    w_x = float(input("Enter X value of the waypoint: "))*100
-    w_y = float(input("Enter Y value of the waypoint: "))*100
-    navigateToWaypoint(w_x, w_y)
+#inputs for 3b
+# while True: #enter input co-ords, rotate, move, REPEAT
+#     w_x = float(input("Enter X value of the waypoint: "))*100
+#     w_y = float(input("Enter Y value of the waypoint: "))*100
+#     navigateToWaypoint(w_x, w_y)
 
 
+#this is the function we need 3.1 of week 5 practical
+def calculate_likelihood(float x, float y, float theta, float z): #current state of particle (x,y,0) plus sonar reading z
+    
+    ma =((168 − 0 )*(0 − x) − (0 − 0 )*(0 − y))/((168 − 0 )*math.cos(theta) − (0 − 0 )*math.sin(theta))
+    mb =((168 − 168 )*(0 − x) − (84 − 0 )*(168 − y))/((168 − 168 )*math.cos(theta) − (84 − 0 )*math.sin(theta))
+    mc =((210 − 126 )*(84 − x) − (84 − 84 )*(126 − y))/((210 − 126 )*math.cos(theta) − (84 − 84 )*math.sin(theta))
+    md =((210 − 210 )*(84 − x) − (168 − 84 )*(210 − y))/((210 − 210 )*math.cos(theta) − (168 − 84 )*math.sin(theta))
+    me =((84 − 210 )*(168 − x) − (168 − 168 )*(210 − y))/((84 − 210 )*math.cos(theta) − (168 − 168 )*math.sin(theta))
+    mf =((84 − 84 )*(168 − x) − (210 − 168 )*(84 − y))/((84 − 84 )*math.cos(theta) − (210 − 168 )*math.sin(theta))
+    mg =((0 − 84 )*(210 − x) − (210 − 210 )*(84 − y))/((0 − 84 )*math.cos(theta) − (210− 210 )*math.sin(theta))
+    mh =((0 − 0 )*(210 − x) − (0 − 210 )*(0 − y))/((0 − 0 )*math.cos(theta) − ( 0− 210 )*math.sin(theta))
 
+    predicted_m = [ma,mb,mc,md,me,mf,mg,mh]
 
-#STUFF HERE IS FROM particleDataStructures DIRECTLY, NEEDS A LOT OF EDITTING
-#
-#
-#
-#
-#
-canvas = Canvas();	# global canvas we are going to draw on
-
-mymap = Map();
-# Definitions of walls
-# a: O to A
-# b: A to B
-# c: C to D
-# d: D to E
-# e: E to F
-# f: F to G
-# g: G to H
-# h: H to O
-mymap.add_wall((0,0,0,168));        # a
-mymap.add_wall((0,168,84,168));     # b
-mymap.add_wall((84,126,84,210));    # c
-mymap.add_wall((84,210,168,210));   # d
-mymap.add_wall((168,210,168,84));   # e
-mymap.add_wall((168,84,210,84));    # f
-mymap.add_wall((210,84,210,0));     # g
-mymap.add_wall((210,0,0,0));        # h
-mymap.draw();
-    return random.gauss(80,3) + 70*(math.sin(t)); # in cm
-
-particles = Particles();
-
-t = 0;
-while True:
-    particles.update();
-    particles.draw();
-    t += 0.05;
-    time.sleep(0.05);
+    

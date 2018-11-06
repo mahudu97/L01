@@ -68,14 +68,14 @@ interface.setMotorAngleControllerParameters(motors[1],motorParams_left)
 def forward( dist ):
     #convert dist in cm to revolutions of the wheels in rad
 	angle = radMove*dist
-	print("Moving forward by ", dist, "cm")
+	print("Moving forward by ", round(dist,2), "cm")
 	interface.increaseMotorAngleReferences(motors,[angle,angle])
 	return True
 
 def backward (dist):
     #convert dist in cm to revolutions of the wheels in rad
 	angle = radMove*dist
-	print ("Moving backward by ", dist, "cm")
+	print ("Moving backward by ", round(dist,2), "cm")
 	interface.increaseMotorAngleReferences(motors,[-angle,-angle])
 	return True
 
@@ -89,14 +89,14 @@ def keepRolling(speedR,speedL):
 def left_90 (quantity):
     #convert quantity (of left 90 rotations about centre) to revolutions of the wheels in rad
 	angle = radTurn*quantity
-	print ("Rotating left by ", quantity*90, "degrees")
+	print ("Rotating left by ", round(quantity*90,3), "degrees")
 	interface.increaseMotorAngleReferences(motors,[angle,-angle])
 	return True
 
 def right_90 (quantity):
     #convert quantity (of right 90 rotations about center) to revolutions of the wheels in rad
 	angle = radTurn*quantity
-	print ("Rotating right by ", quantity*90, "degrees")
+	print ("Rotating right by ", round(quantity*90,3), "degrees")
 	interface.increaseMotorAngleReferences(motors,[-angle,angle])
 	return True
 
@@ -104,15 +104,15 @@ def right_90 (quantity):
 def turnLeft(quantity):
     #convert quantity (of left 90 rotations about left wheel) to revolutions of the wheels in rad
 	angle = radTurn*2*quantity
-	print ("Turning left")
+	print ("Turning left by ", round(quantity*90,3), "degrees")
 	interface.increaseMotorAngleReferences(motors,[angle,0])
 	return True
 
 def turnRight(quantity):
     #convert quantity (of right 90 rotations about right wheel) to revolutions of the wheels in rad
 	angle = radTurn*2*quantity
-	print ("Turning right")
-	interface.increaseMotorAngleReferences(motors,[0,angle])
+	print ("Turning right by ", round(quantity*90,3), "degrees")
+		interface.increaseMotorAngleReferences(motors,[0,angle])
 	return True
 
 

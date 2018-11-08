@@ -16,9 +16,9 @@ weights = [1/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES # In an actual example t
 #the errors, need to be generated each time called
 #TODO: make these correct
 mu = 0 # update with actual value
-sigma_e = 0.037
-sigma_f = 0.037
-sigma_g = 0.021
+sigma_e = 0.1
+sigma_f = 0.04519
+sigma_g = 0.03490
 #different sigmas
 #random.gauss(mu, sigma) generates random number smapled from mean mu and SD sigma
 

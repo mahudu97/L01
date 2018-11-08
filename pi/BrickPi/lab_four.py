@@ -77,20 +77,50 @@ def navigateToWaypoint( X, Y):
 #this is the function we need 3.1 of week 5 practical
 def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plus sonar reading z
     #adding positional offset to z
-    sonar_reading = z + 9  # guestimate placeholder. change to actual value
 
-    #General Formula: m = ((By − Ay )*(Ax − x) − (Bx − Ax )*(Ay − y))/((By − Ay )*math.cos(theta) − (Bx − Ax )*math.sin(theta))
-    ma =((168 −   0)*(  0 − x) − (  0 −   0)*(  0 − y))/((168 −   0)*math.cos(theta) − (  0 −   0)*math.sin(theta))
-    mb =((168 − 168)*(  0 − x) − ( 84 −   0)*(168 − y))/((168 − 168)*math.cos(theta) − ( 84 −   0)*math.sin(theta))
-    mc =((210 − 126)*( 84 − x) − ( 84 −  84)*(126 − y))/((210 − 126)*math.cos(theta) − ( 84 −  84)*math.sin(theta))
-    md =((210 − 210)*( 84 − x) − (168 −  84)*(210 − y))/((210 − 210)*math.cos(theta) − (168 −  84)*math.sin(theta))
-    me =(( 84 − 210)*(168 − x) − (168 − 168)*(210 − y))/(( 84 − 210)*math.cos(theta) − (168 − 168)*math.sin(theta))
-    mf =(( 84 −  84)*(168 − x) − (210 − 168)*( 84 − y))/(( 84 −  84)*math.cos(theta) − (210 − 168)*math.sin(theta))
-    mg =((  0 −  84)*(210 − x) − (210 − 210)*( 84 − y))/((  0 −  84)*math.cos(theta) − (210 − 210)*math.sin(theta))
-    mh =((  0 −   0)*(210 − x) − (  0 − 210)*(  0 − y))/((  0 −   0)*math.cos(theta) − (  0 − 210)*math.sin(theta))
+    # adjust for systematic sonar error
+    if z >45:
+        z = 0.99*z
 
+    # sonar is placed 9cm infront of centre of rotation
+    sonar_reading = z + 9 
+
+
+
+    ma =((168 -   0)*(  0 - x) - (  0 -   0)*(  0 - y))/((168 -   0)*math.cos(theta) - (  0 -   0)*math.sin(theta))
+    mb =((168 - 168)*(  0 - x) - ( 84 -   0)*(168 - y))/((168 - 168)*math.cos(theta) - ( 84 -   0)*math.sin(theta))
+    mc =((210 - 126)*( 84 - x) - ( 84 -  84)*(126 - y))/((210 - 126)*math.cos(theta) - ( 84 -  84)*math.sin(theta))
+    md =((210 - 210)*( 84 - x) - (168 -  84)*(210 - y))/((210 - 210)*math.cos(theta) - (168 -  84)*math.sin(theta))
+    me =(( 84 - 210)*(168 - x) - (168 - 168)*(210 - y))/(( 84 - 210)*math.cos(theta) - (168 - 168)*math.sin(theta))
+    mf =(( 84 -  84)*(168 - x) - (210 - 168)*( 84 - y))/(( 84 -  84)*math.cos(theta) - (210 - 168)*math.sin(theta))
+    mg =((  0 -  84)*(210 - x) - (210 - 210)*( 84 - y))/((  0 -  84)*math.cos(theta) - (210 - 210)*math.sin(theta))
+    mh =((  0 -   0)*(210 - x) - (  0 - 210)*(  0 - y))/((  0 -   0)*math.cos(theta) - (  0 - 210)*math.sin(theta))
+
+    Wall = world.map.walls
+
+    smallest_m = 1000
+
+    m_index = 10
     predicted_m = [ma,mb,mc,md,me,mf,mg,mh]
     # find smallest m - and make sure it is feasible
-    for m in predicted_m:
-        
+    for index in range (len( predicted_m)):
+        if predicted_m[index]>0 and predicted_m[index] <smallest_m :
+            m_x = x+predicted_m[index]*math.cos(theta)
+            m_y = y+predicted_m[index]*math.sin(theta)
+            lineX = [ Wall[index][0], Wall[index][2]]  
+            lineY = [ Wall[index][1], Wall[index][3]]  
+
+            if m_x in range(lineX[0], lineX[1]) and m_y in range(lineY[0], lineY[1]):
+                m_index = index
+    
+    if m_index == 10:
+        return 0
+    
+    mean = sonar_reading-predicted_m[m_index]
+    sd = 0.01 * mean
+    K = 0.1 # get actual constant for robustnus
     # get likelihood
+    likelihood = random.gauss(mean, sd) + K
+
+    print likelihood
+    return likelihood

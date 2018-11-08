@@ -81,7 +81,8 @@ bool Interface::initialize()
   }
 
   int result = BrickPiSetup();
-  printf("BrickPiSetup: %d\n", result);
+  //Commented out for better UI
+  //printf("BrickPiSetup: %d\n", result);
   if (result != 0) {
     return false;
   }
@@ -100,7 +101,7 @@ bool Interface::initialize()
 /// softly stop all motors and sensors, stop the polling and control thread:
 bool Interface::terminate()
 {
-  std::cout << "terminate..." << std::endl;
+  std::cout << "And I'm done..." << std::endl;
   // check if control loop is already running
   bool success = true;
   if (!controlAndSensingThread_) {
@@ -1272,8 +1273,8 @@ bool Interface::controlMotors(timestamp_t timestamp)
 
 int Interface::controlAndSensingLoop()
 {
-
-  std::cout << "controlAndSensingLoop: running" << std::endl;
+  //Commented out for better UI
+  //std::cout << "controlAndSensingLoop: running" << std::endl;
 
   boost::timer::cpu_timer intervalTimer;
   boost::timer::nanosecond_type startTime, lastUltrasonicUpdate = 0;
@@ -1300,8 +1301,8 @@ int Interface::controlAndSensingLoop()
             (CONTROL_INTERVAL_SECONDS * 1.0e6
                 - (intervalTimer.elapsed().wall / 1000 - startTime / 1000))));
   }
-
-  std::cout << "controlAndSensingLoop: finished" << std::endl;
+  //Commented out for better UI
+  // std::cout << "controlAndSensingLoop: finished" << std::endl;
   return 0;
 }
 

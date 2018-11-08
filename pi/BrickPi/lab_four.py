@@ -20,8 +20,6 @@ estimate_theta = 0.0
 estimate_x = 0.0
 estimate_y = 0.0
 
-
-
 def navigateToWaypoint( X, Y):
     global estimate_x
     global estimate_y
@@ -35,13 +33,11 @@ def navigateToWaypoint( X, Y):
     global sigma_f
     global sigma_g
 
-
     # print "Silly test " + str(estimate_x) +" "+ str(estimate_y) +" "+str(estimate_theta)
     x_diff = X-estimate_x
     y_diff = Y-estimate_y
     dist = (x_diff**2 + y_diff**2)**0.5
     angleDest = math.atan2(y_diff,x_diff) # returns an angle between - pi  and pi
-
 
     angleRotate = angleDest - estimate_theta
 
@@ -53,8 +49,6 @@ def navigateToWaypoint( X, Y):
         p_theta[k] += angleRotate + error_g
     #   particles_rot.append((5*p_x[k], 5*p_y[k], p_theta[k]))
     #print "drawParticles:" + str(particles_rot)  # should print out the drawParticles
-
-
 
     L01.forward(dist)
     time.sleep(dist*0.2)
@@ -79,25 +73,24 @@ def navigateToWaypoint( X, Y):
     #print "Silly test 2 " + str(estimate_x) +" "+ str(estimate_y) +" "+str(estimate_theta)
 
 
-#inputs for 3b
-# while True: #enter input co-ords, rotate, move, REPEAT
-#     w_x = float(input("Enter X value of the waypoint: "))*100
-#     w_y = float(input("Enter Y value of the waypoint: "))*100
-#     navigateToWaypoint(w_x, w_y)
-
 
 #this is the function we need 3.1 of week 5 practical
-def calculate_likelihood(float x, float y, float theta, float z): #current state of particle (x,y,0) plus sonar reading z
-    
-    ma =((168 − 0 )*(0 − x) − (0 − 0 )*(0 − y))/((168 − 0 )*math.cos(theta) − (0 − 0 )*math.sin(theta))
-    mb =((168 − 168 )*(0 − x) − (84 − 0 )*(168 − y))/((168 − 168 )*math.cos(theta) − (84 − 0 )*math.sin(theta))
-    mc =((210 − 126 )*(84 − x) − (84 − 84 )*(126 − y))/((210 − 126 )*math.cos(theta) − (84 − 84 )*math.sin(theta))
-    md =((210 − 210 )*(84 − x) − (168 − 84 )*(210 − y))/((210 − 210 )*math.cos(theta) − (168 − 84 )*math.sin(theta))
-    me =((84 − 210 )*(168 − x) − (168 − 168 )*(210 − y))/((84 − 210 )*math.cos(theta) − (168 − 168 )*math.sin(theta))
-    mf =((84 − 84 )*(168 − x) − (210 − 168 )*(84 − y))/((84 − 84 )*math.cos(theta) − (210 − 168 )*math.sin(theta))
-    mg =((0 − 84 )*(210 − x) − (210 − 210 )*(84 − y))/((0 − 84 )*math.cos(theta) − (210− 210 )*math.sin(theta))
-    mh =((0 − 0 )*(210 − x) − (0 − 210 )*(0 − y))/((0 − 0 )*math.cos(theta) − ( 0− 210 )*math.sin(theta))
+def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plus sonar reading z
+    #adding positional offset to z
+    sonar_reading = z + 9  # guestimate placeholder. change to actual value
+
+    #General Formula: m = ((By − Ay )*(Ax − x) − (Bx − Ax )*(Ay − y))/((By − Ay )*math.cos(theta) − (Bx − Ax )*math.sin(theta))
+    ma =((168 −   0)*(  0 − x) − (  0 −   0)*(  0 − y))/((168 −   0)*math.cos(theta) − (  0 −   0)*math.sin(theta))
+    mb =((168 − 168)*(  0 − x) − ( 84 −   0)*(168 − y))/((168 − 168)*math.cos(theta) − ( 84 −   0)*math.sin(theta))
+    mc =((210 − 126)*( 84 − x) − ( 84 −  84)*(126 − y))/((210 − 126)*math.cos(theta) − ( 84 −  84)*math.sin(theta))
+    md =((210 − 210)*( 84 − x) − (168 −  84)*(210 − y))/((210 − 210)*math.cos(theta) − (168 −  84)*math.sin(theta))
+    me =(( 84 − 210)*(168 − x) − (168 − 168)*(210 − y))/(( 84 − 210)*math.cos(theta) − (168 − 168)*math.sin(theta))
+    mf =(( 84 −  84)*(168 − x) − (210 − 168)*( 84 − y))/(( 84 −  84)*math.cos(theta) − (210 − 168)*math.sin(theta))
+    mg =((  0 −  84)*(210 − x) − (210 − 210)*( 84 − y))/((  0 −  84)*math.cos(theta) − (210 − 210)*math.sin(theta))
+    mh =((  0 −   0)*(210 − x) − (  0 − 210)*(  0 − y))/((  0 −   0)*math.cos(theta) − (  0 − 210)*math.sin(theta))
 
     predicted_m = [ma,mb,mc,md,me,mf,mg,mh]
-
-    
+    # find smallest m - and make sure it is feasible
+    for m in predicted_m:
+        
+    # get likelihood

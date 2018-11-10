@@ -2,8 +2,6 @@ import batmobile as bat
 import time
 
 
-bat.interface.sensorEnable(bat.us_port, bat.brickpi.SensorType.SENSOR_ULTRASONIC)
-
 distance = 30
 base = 6
 p=0.1

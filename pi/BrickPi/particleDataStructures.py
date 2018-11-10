@@ -6,19 +6,6 @@ import time
 import random
 import math
 
-# Functions to generate some dummy particles data:
-def calcX():
-    return random.gauss(80,3) + 70*(math.sin(t)); # in cm
-
-def calcY():
-    return random.gauss(70,3) + 60*(math.sin(2*t)); # in cm
-
-def calcW():
-    return random.random();
-
-def calcTheta():
-    return random.randint(0,360);
-
 # A Canvas class for drawing a map and particles:
 # 	- it takes care of a proper scaling and coordinate transformation between
 #	  the map frame of reference (in cm) and the display (in pixels)
@@ -64,43 +51,33 @@ class Map:
 # Simple Particles set
 class Particles:
     def __init__(self):
-        self.n = 10;    
+        self.n = 100;    
         self.data = [];
         
-
-    def update(self):
-        self.data = [(calcX(), calcY(), calcTheta(), calcW()) for i in range(self.n)];
+    #def update(self):
+        #self.data = [(calcX(), calcY(), calcTheta(), calcW()) for i in range(self.n)];
     
     def draw(self):
         canvas.drawParticles(self.data);
 
 canvas = Canvas()	# global canvas we are going to draw on
 
-mymap = Map()
-# Definitions of walls
-# a: O to A
-# b: A to B
-# c: C to D
-# d: D to E
-# e: E to F
-# f: F to G
-# g: G to H
-# h: H to O
-mymap.add_wall((0,0,0,168))        # a
-mymap.add_wall((0,168,84,168))     # b
-mymap.add_wall((84,126,84,210))    # c
-mymap.add_wall((84,210,168,210))   # d
-mymap.add_wall((168,210,168,84))   # e
-mymap.add_wall((168,84,210,84))    # f
-mymap.add_wall((210,84,210,0))     # g
-mymap.add_wall((210,0,0,0))        # h
-mymap.draw()
-
-particles = Particles()
-
-t = 0
-while True:
-    particles.update()
-    particles.draw()
-    t += 0.05
-    time.sleep(0.05)
+def init_world(mymap):
+    # Definitions of walls
+    # a: O to A
+    # b: A to B
+    # c: C to D
+    # d: D to E
+    # e: E to F
+    # f: F to G
+    # g: G to H
+    # h: H to O
+    mymap.add_wall((0,0,0,168))        # a
+    mymap.add_wall((0,168,84,168))     # b
+    mymap.add_wall((84,126,84,210))    # c
+    mymap.add_wall((84,210,168,210))   # d
+    mymap.add_wall((168,210,168,84))   # e
+    mymap.add_wall((168,84,210,84))    # f
+    mymap.add_wall((210,84,210,0))     # g
+    mymap.add_wall((210,0,0,0))        # h
+    mymap.draw()

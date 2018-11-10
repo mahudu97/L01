@@ -1,3 +1,5 @@
+#!/usr/bin/env python 
+
 import batmobile as L01
 import time
 import random
@@ -10,7 +12,6 @@ p_y = [0.0] * NUMBER_OF_PARTICLES
 p_theta = [0.0] * NUMBER_OF_PARTICLES
 weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES # In an actual example these would be updated
 
-
 mu = 0 # update with actual value
 sigma_e = 0.037
 sigma_f = 0.037
@@ -19,6 +20,13 @@ sigma_g = 0.021
 estimate_theta = 0.0
 estimate_x = 0.0
 estimate_y = 0.0
+
+# from particle Data Structures
+mymap = world.Map()
+particles = world.Particles()
+
+world.init_world(mymap)
+
 
 def navigateToWaypoint( X, Y):
     global estimate_x
@@ -79,7 +87,7 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
         z = 0.99*z
 
     # sonar is placed 9cm infront of centre of rotation
-    sonar_reading = z + 9 
+    adj_z = z + 9 
 
     ma =((168 -   0)*(  0 - x) - (  0 -   0)*(  0 - y))/((168 -   0)*math.cos(theta) - (  0 -   0)*math.sin(theta))
     mb =((168 - 168)*(  0 - x) - ( 84 -   0)*(168 - y))/((168 - 168)*math.cos(theta) - ( 84 -   0)*math.sin(theta))
@@ -90,31 +98,37 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
     mg =((  0 -  84)*(210 - x) - (210 - 210)*( 84 - y))/((  0 -  84)*math.cos(theta) - (210 - 210)*math.sin(theta))
     mh =((  0 -   0)*(210 - x) - (  0 - 210)*(  0 - y))/((  0 -   0)*math.cos(theta) - (  0 - 210)*math.sin(theta))
 
-    Wall = world.mymap.walls
+    Wall = mymap.walls
 
-    smallest_m = 1000
+    smallest_m = ma
 
     m_index = 10
     predicted_m = [ma,mb,mc,md,me,mf,mg,mh]
     # find smallest m - and make sure it is feasible
     for index in range (len( predicted_m)):
-        if predicted_m[index]>0 and predicted_m[index] <smallest_m :
+        if predicted_m[index]>0 and predicted_m[index] <=smallest_m :
             m_x = x+predicted_m[index]*math.cos(theta)
             m_y = y+predicted_m[index]*math.sin(theta)
             lineX = [ Wall[index][0], Wall[index][2]]  
-            lineY = [ Wall[index][1], Wall[index][3]]  
+            lineY = [ Wall[index][1], Wall[index][3]]
 
-            if m_x in range(lineX[0], lineX[1]) and m_y in range(lineY[0], lineY[1]):
+            lineX.sort()
+            lineY.sort()
+
+            if m_x >= lineX[0]  and m_x <= lineX[1] \
+                and m_y >= lineY[0]  and m_y <= lineY[1]:
                 m_index = index
-    
+
     if m_index == 10:
         return 0
     
-    mean = sonar_reading-predicted_m[m_index]
-    sd = 0.01 * mean
-    K = 0.1 # get actual constant for robustnus
+    mean = adj_z-predicted_m[m_index]
+    sd = 0.01 * z
+    gauss = math.e**(-0.5*(float(mean)/sd)**2)
+    K = 0.0 # get actual constant for robustnus
     # get likelihood
-    likelihood = random.gauss(mean, sd) + K
+    likelihood = gauss + K
 
-    print likelihood
     return likelihood
+
+print calculate_likelihood(84, 30, math.pi, 75)

@@ -73,19 +73,13 @@ def navigateToWaypoint( X, Y):
     #print "Silly test 2 " + str(estimate_x) +" "+ str(estimate_y) +" "+str(estimate_theta)
 
 
-
-#this is the function we need 3.1 of week 5 practical
 def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plus sonar reading z
-    #adding positional offset to z
-
     # adjust for systematic sonar error
     if z >45:
         z = 0.99*z
 
     # sonar is placed 9cm infront of centre of rotation
     sonar_reading = z + 9 
-
-
 
     ma =((168 -   0)*(  0 - x) - (  0 -   0)*(  0 - y))/((168 -   0)*math.cos(theta) - (  0 -   0)*math.sin(theta))
     mb =((168 - 168)*(  0 - x) - ( 84 -   0)*(168 - y))/((168 - 168)*math.cos(theta) - ( 84 -   0)*math.sin(theta))
@@ -96,7 +90,7 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
     mg =((  0 -  84)*(210 - x) - (210 - 210)*( 84 - y))/((  0 -  84)*math.cos(theta) - (210 - 210)*math.sin(theta))
     mh =((  0 -   0)*(210 - x) - (  0 - 210)*(  0 - y))/((  0 -   0)*math.cos(theta) - (  0 - 210)*math.sin(theta))
 
-    Wall = world.map.walls
+    Wall = world.mymap.walls
 
     smallest_m = 1000
 

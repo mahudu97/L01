@@ -214,8 +214,21 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
     angleRotate = angleDest - estimate_theta
     L01.left_90(angleRotate/1.5708)
     time.sleep(2.5)
+	
+	#update all the particles angle
+	for k in range (100):
+        error_g = random.gauss(mu,sigma_g)
+        p_theta[k] += angleRotate + error_g
+		
+		
     L01.forward(dist)
     time.sleep(dist*0.13)
+	for k in range(100):          #this code is only relevant for correction once a move has been logged
+        error_e = random.gauss(mu,sigma_e)
+        error_f = random.gauss(mu,sigma_f)
+        p_x[k] += (dist + error_e) * math.cos(angleDest)
+        p_y[k] += (dist + error_e) * math.sin(angleDest)
+        p_theta[k] += error_f
 
 waypoints = [(180,30),(180,54),(138,54),(138,168),(114,168),(114,84),(84,84),(84,30)]
 

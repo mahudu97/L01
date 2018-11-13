@@ -18,7 +18,7 @@ ki_right = ki_left
 kd_right = kd_left
 PWM_right= 18.0
 
-radTurn = 3.505
+radTurn = 3.55
 radMove = 0.29398398748182
 
 #SETTING SENSOR PARAMS
@@ -50,7 +50,7 @@ motorParams_left.pidParameters.k_d = kd_left
 motorParams_right = interface.MotorAngleControllerParameters()
 motorParams_right.maxRotationAcceleration = maxACC
 motorParams_right.maxRotationSpeed = maxVEL
-motorParams_right.feedForwardGain =265/20.0
+motorParams_right.feedForwardGain =245/20.0
 motorParams_right.minPWM = PWM_right
 motorParams_right.pidParameters.minOutput = -255
 motorParams_right.pidParameters.maxOutput = 255

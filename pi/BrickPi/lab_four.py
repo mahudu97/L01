@@ -22,8 +22,8 @@ sigma_g = 0.0698 #0.03490
 
 # current estimate of L01's position
 estimate_theta = 0.0
-estimate_x = 0.0
-estimate_y = 0.0
+estimate_x = 84.0
+estimate_y = 30.0
 
 # from particle Data Structures
 mymap = world.Map()
@@ -171,7 +171,7 @@ def read_sonar():
         return read_sonar()
 
 # TODO: 3.3
-def navigateToWaypoint( X, Y):
+def navigateToWaypoint(X, Y):  # X,Y are cords of dest
     global estimate_x
     global estimate_y
     global estimate_theta
@@ -183,33 +183,27 @@ def navigateToWaypoint( X, Y):
     global sigma_e
     global sigma_f
     global sigma_g
+    
 
+    #print "Silly test " + str(estimate_x) +" "+ str(estimate_y) +" "+str(estimate_theta)
     x_diff = X-estimate_x
     y_diff = Y-estimate_y
     dist = (x_diff**2 + y_diff**2)**0.5
-    angleDest = math.atan2(y_diff,x_diff) # returns an angle between - pi  and pi
-
+    angleDest = math.atan2(y_diff,x_diff) # returns an angle between - pi  and pi    
     angleRotate = angleDest - estimate_theta
-
     L01.left_90(angleRotate/1.5708)
     time.sleep(2.5)
-    for k in range (NUMBER_OF_PARTICLES):
-        error_g = random.gauss(mu,sigma_g)
-        p_theta[k] += angleRotate + error_g
-    #   particles_rot.append((5*p_x[k], 5*p_y[k], p_theta[k]))
-    #print "drawParticles:" + str(particles_rot)  # should print out the drawParticles
-
     L01.forward(dist)
     time.sleep(dist*0.2)
-    #particles = []
-    for k in range(NUMBER_OF_PARTICLES):          #this code is only relevant for correction once a move has been logged
-        error_e = random.gauss(mu,sigma_e)
-        error_f = random.gauss(mu,sigma_f)
-        p_x[k] += (dist + error_e) * math.cos(angleDest)
-        p_y[k] += (dist + error_e) * math.sin(angleDest)
-        p_theta[k] += error_f
-    #    particles.append((5*p_x[k], 5*p_y[k], p_theta[k]))
-    #print "drawParticles:" + str(particles)  # should print out the drawParticles
+ 
+waypoints = [(180,30),(180,54),(138,54),(138,168),(114,168),(114,84),(84,84),(84,30)] 
+
+for x,y in waypoints:
+	navigateToWaypoint(x,y)
+	reading = read_sonar()
+	update_particles(reading)
+	normalise()
+	resample()
 
 
 L01.interface.terminate()

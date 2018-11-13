@@ -57,6 +57,9 @@ def normalise():
     total = sum(weights)
     for i in range(NUMBER_OF_PARTICLES):
         weights[i] /= total
+    if total == 0:
+        for i in range(NUMBER_OF_PARTICLES):
+            weights[i] = 0.1
 
 
 #
@@ -206,8 +209,7 @@ def read_sonar():
         time.sleep(0.0045)
     usReadings.sort()
     if usReadings[5] :
-        print "I measured a distance of "+ str(usReadings[5])
-        return usReadings[5][0]
+        return min(usReadings[5][0],160)
     else:
         print "Failed US reading"
         return read_sonar()
@@ -238,37 +240,33 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
     e = sigma_e * math.sqrt(dist/10)
     f = sigma_f * math.sqrt(dist/10)
     g = sigma_g * math.sqrt(dist/10)
-	
-	#update all the particles angle
-	for k in range (100):
-		error_g = random.gauss(mu,g)
-		p_theta[k] += angleRotate + error_g
-		
-		
+    
+    #update all the particles angle
+    for k in range (100):
+        error_g = random.gauss(mu,g)
+        p_theta[k] += angleRotate + error_g
+        
+        
     L01.forward(dist)
     time.sleep(dist*0.08)
-	for k in range(100):          #this code is only relevant for correction once a move has been logged
+    for k in range(100):          #this code is only relevant for correction once a move has been logged
         error_e = random.gauss(mu,e)
-		error_f = random.gauss(mu,f)
+        error_f = random.gauss(mu,f)
         p_x[k] += (dist + error_e) * math.cos(angleDest)
         p_y[k] += (dist + error_e) * math.sin(angleDest)
         p_theta[k] += error_f
 
-waypoints = [(104,30),(124,30),(144,30),(164,30),(180,30),(180,50),(180,54),(160,54),(140,54),(138,54),(138,74),(138,94),(138,114),(138,134),(138,154),(138,168),(118,168)(114,168),(114,148),(114,128),(114,108),(114,88),(114,84),(94,84)(84,84),(84,64),(84,44)(84,30)]
+waypoints = [(104,30),(124,30),(144,30),(164,30),(180,30),(180,50),(180,54),(160,54),(140,54),(138,54),(138,74),(138,94),(138,114),(138,134),(138,154),(138,168),(118,168),(114,168),(114,148),(114,128),(114,108),(114,88),(114,84),(94,84),(84,84),(84,64),(84,44),(84,30)]
 
 
 for x,y in waypoints:
     print "What am I doing?: Navigate to waypoint"
-	navigateToWaypoint(x,y)
-    print "What am I doing?: Read Sonar"
-	reading = read_sonar()
-    print "What am I doing?: Update particles"
-	update_particles(reading)
-    print "What am I doing?: Normalize"
-	normalise()
-    print "What am I doing?: Resample"
-	resample()
-    print "What am I doing?: Update"
+    navigateToWaypoint(x,y)
+    reading = read_sonar()   
+    update_particles(reading)
+    normalise()
+    resample()
+    
     updatePos()
     print "What am I doing?: Print"
     particles.data =[]

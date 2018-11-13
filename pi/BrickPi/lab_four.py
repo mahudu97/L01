@@ -148,7 +148,7 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
 
     # find most suitbale m
     walls = mymap.walls
-    smallest_m = math.inf
+    smallest_m = 99999
     sm_index = 10
     predicted_m = [ma,mb,mc,md,me,mf,mg,mh]
     # find smallest m - and make sure it is feasible
@@ -241,20 +241,20 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
 	
 	#update all the particles angle
 	for k in range (100):
-        error_g = random.gauss(mu,g)
-        p_theta[k] += angleRotate + error_g
+		error_g = random.gauss(mu,g)
+		p_theta[k] += angleRotate + error_g
 		
 		
     L01.forward(dist)
     time.sleep(dist*0.08)
 	for k in range(100):          #this code is only relevant for correction once a move has been logged
         error_e = random.gauss(mu,e)
-        error_f = random.gauss(mu,f)
+		error_f = random.gauss(mu,f)
         p_x[k] += (dist + error_e) * math.cos(angleDest)
         p_y[k] += (dist + error_e) * math.sin(angleDest)
         p_theta[k] += error_f
 
-waypoints = [(180,30),(180,54),(138,54),(138,168),(114,168),(114,84),(84,84),(84,30)]
+waypoints = [(104,30),(124,30),(144,30),(164,30),(180,30),(180,50),(180,54),(160,54),(140,54),(138,54),(138,74),(138,94),(138,114),(138,134),(138,154),(138,168),(118,168)(114,168),(114,148),(114,128),(114,108),(114,88),(114,84),(94,84)(84,84),(84,64),(84,44)(84,30)]
 
 
 for x,y in waypoints:

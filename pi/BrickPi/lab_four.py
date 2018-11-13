@@ -273,7 +273,7 @@ for x,y in waypoints:
     print "What am I doing?: Print"
     particles.data =[]
     for k in range(100):
-        particles.data.append((p_x[k], p_y[k], p_theta[k]))
+        particles.data.append((p_x[k], p_y[k], p_theta[k],weights[k]))
     particles.draw()
 
 L01.interface.terminate()

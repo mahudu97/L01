@@ -6,11 +6,18 @@ import random
 import math
 import particleDataStructures as world
 
+
+# current estimate of L01's position
+estimate_theta = 0.0
+estimate_x = 84.0
+estimate_y = 30.0
+
+
 # initialise particles
 NUMBER_OF_PARTICLES = 100
-p_x = [0.0] * NUMBER_OF_PARTICLES # At the start every particle has its intial coords as 0,0,0
-p_y = [0.0] * NUMBER_OF_PARTICLES
-p_theta = [0.0] * NUMBER_OF_PARTICLES
+p_x = [estimate_x] * NUMBER_OF_PARTICLES # At the start every particle has its intial coords as 0,0,0
+p_y = [estimate_y] * NUMBER_OF_PARTICLES
+p_theta = [estimate_theta] * NUMBER_OF_PARTICLES
 weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES # In an actual example these would be updated
 
 mu = 0 # update with actual value
@@ -20,19 +27,22 @@ sigma_e = 0.2 #0.1
 sigma_f = 0.09038 #0.04519
 sigma_g = 0.0698 #0.03490
 
-# current estimate of L01's position
-estimate_theta = 0.0
-estimate_x = 84.0
-estimate_y = 30.0
 
 # from particle Data Structures
 mymap = world.Map()
 particles = world.Particles() # for printing
+for i in range(100):
+    particles.data.append((estimate_x,estimate_y, estimate_theta, weights[0]))
+
 world.init_world(mymap)
 
 
 # estimate L01 position based on particles
 def update_estimate():
+    global p_x
+    global p_y
+    global p_theta
+    global weights
     estimate_x = 0.0
     estimate_y = 0.0
     estimate_theta = 0.0
@@ -44,6 +54,7 @@ def update_estimate():
 
 # normalise weights
 def normalise():
+    global weights
     total = sum(weights)
     for i in range(NUMBER_OF_PARTICLES):
         weights[i] /= total
@@ -98,15 +109,24 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
     # sonar is placed 9cm infront of centre of rotation
     adj_z = z + 9
 
+    #variables used to catch divide by zeros
+    c = math.cos(theta)
+    s = math.sin(theta)
+    if c==0:
+        c+=0.00000001
+    if s==0:
+        s+=0.00000001
+        
+
     # calc current particles distance to each wall's infinite line form
-    ma =((168 -   0)*(  0 - x) - (  0 -   0)*(  0 - y))/((168 -   0)*math.cos(theta) - (  0 -   0)*math.sin(theta))
-    mb =((168 - 168)*(  0 - x) - ( 84 -   0)*(168 - y))/((168 - 168)*math.cos(theta) - ( 84 -   0)*math.sin(theta))
-    mc =((210 - 126)*( 84 - x) - ( 84 -  84)*(126 - y))/((210 - 126)*math.cos(theta) - ( 84 -  84)*math.sin(theta))
-    md =((210 - 210)*( 84 - x) - (168 -  84)*(210 - y))/((210 - 210)*math.cos(theta) - (168 -  84)*math.sin(theta))
-    me =(( 84 - 210)*(168 - x) - (168 - 168)*(210 - y))/(( 84 - 210)*math.cos(theta) - (168 - 168)*math.sin(theta))
-    mf =(( 84 -  84)*(168 - x) - (210 - 168)*( 84 - y))/(( 84 -  84)*math.cos(theta) - (210 - 168)*math.sin(theta))
-    mg =((  0 -  84)*(210 - x) - (210 - 210)*( 84 - y))/((  0 -  84)*math.cos(theta) - (210 - 210)*math.sin(theta))
-    mh =((  0 -   0)*(210 - x) - (  0 - 210)*(  0 - y))/((  0 -   0)*math.cos(theta) - (  0 - 210)*math.sin(theta))
+    ma =((168 -   0)*(  0 - x) - (  0 -   0)*(  0 - y))/((168 -   0)*c - (  0 -   0)*s)
+    mb =((168 - 168)*(  0 - x) - ( 84 -   0)*(168 - y))/((168 - 168)*c - ( 84 -   0)*s)
+    mc =((210 - 126)*( 84 - x) - ( 84 -  84)*(126 - y))/((210 - 126)*c - ( 84 -  84)*s)
+    md =((210 - 210)*( 84 - x) - (168 -  84)*(210 - y))/((210 - 210)*c - (168 -  84)*s)
+    me =(( 84 - 210)*(168 - x) - (168 - 168)*(210 - y))/(( 84 - 210)*c - (168 - 168)*s)
+    mf =(( 84 -  84)*(168 - x) - (210 - 168)*( 84 - y))/(( 84 -  84)*c - (210 - 168)*s)
+    mg =((  0 -  84)*(210 - x) - (210 - 210)*( 84 - y))/((  0 -  84)*c - (210 - 210)*s)
+    mh =((  0 -   0)*(210 - x) - (  0 - 210)*(  0 - y))/((  0 -   0)*c - (  0 - 210)*s)
 
     # find most suitbale m
     walls = mymap.walls
@@ -142,8 +162,7 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
     #sd of sonar
     # at 100cm - s.d. = 0.2cm
     # TODO: ASK GTA ABOUT SCALING
-    sd_100 = 0.2
-    sd = (smallest_m / 100) * sd_100
+    sd = 2
     gauss = math.e**(-0.5*(float(adj_z-mean)/sd)**2)
     K = 0.0 # get actual constant for robustnus
     likelihood = gauss + K
@@ -152,9 +171,13 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
 
 # call after checking for a valid sonar reading
 def update_particles(z):
-    for p in particles.data:
+    global p_x
+    global p_y
+    global p_theta
+    global weights
+    for i in range(100):
         # update weights
-        p[3] *= calculate_likelihood(p[0], p[1], p[2], z)
+        weights[i] *= calculate_likelihood(p_x[i], p_y[i], p_theta[i], z)
 
 
 # getting a sonar reading
@@ -178,32 +201,42 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
     global p_x
     global p_y
     global p_theta
-    global weights
     global mu
     global sigma_e
     global sigma_f
     global sigma_g
-    
+
 
     #print "Silly test " + str(estimate_x) +" "+ str(estimate_y) +" "+str(estimate_theta)
     x_diff = X-estimate_x
     y_diff = Y-estimate_y
     dist = (x_diff**2 + y_diff**2)**0.5
-    angleDest = math.atan2(y_diff,x_diff) # returns an angle between - pi  and pi    
+    angleDest = math.atan2(y_diff,x_diff) # returns an angle between - pi  and pi
     angleRotate = angleDest - estimate_theta
     L01.left_90(angleRotate/1.5708)
     time.sleep(2.5)
     L01.forward(dist)
-    time.sleep(dist*0.2)
- 
-waypoints = [(180,30),(180,54),(138,54),(138,168),(114,168),(114,84),(84,84),(84,30)] 
+    time.sleep(dist*0.13)
+
+waypoints = [(180,30),(180,54),(138,54),(138,168),(114,168),(114,84),(84,84),(84,30)]
+
 
 for x,y in waypoints:
+    print "What am I doing?: Navigate to waypoint"
 	navigateToWaypoint(x,y)
+    print "What am I doing?: Read Sonar"
 	reading = read_sonar()
+    print "What am I doing?: Update particles"
 	update_particles(reading)
+    print "What am I doing?: Normalize"
 	normalise()
+    print "What am I doing?: Resample"
 	resample()
-
+    print "What am I doing?: Print"
+    particles.data =[]
+    for k in range(100):
+        particles.data.append((p_x[k], p_y[k], p_theta[k]))
+    # print "drawParticles:" + str(particles.data)
+    particles.draw()
 
 L01.interface.terminate()

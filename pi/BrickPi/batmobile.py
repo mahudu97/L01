@@ -8,9 +8,9 @@ interface.initialize()
 maxACC = 8.0
 maxVEL = 12.0
 
-kp_left = 400
-ki_left = 1000
-kd_left = 35
+kp_left = 450
+ki_left = 100
+kd_left = 20
 PWM_left= 18.0
 
 kp_right = kp_left
@@ -39,7 +39,7 @@ interface.motorEnable(motors[1])
 motorParams_left = interface.MotorAngleControllerParameters()
 motorParams_left.maxRotationAcceleration = maxACC
 motorParams_left.maxRotationSpeed = maxVEL
-motorParams_left.feedForwardGain = 255/10.0
+motorParams_left.feedForwardGain = 275/20
 motorParams_left.minPWM = PWM_left
 motorParams_left.pidParameters.minOutput = -255
 motorParams_left.pidParameters.maxOutput = 255
@@ -50,7 +50,7 @@ motorParams_left.pidParameters.k_d = kd_left
 motorParams_right = interface.MotorAngleControllerParameters()
 motorParams_right.maxRotationAcceleration = maxACC
 motorParams_right.maxRotationSpeed = maxVEL
-motorParams_right.feedForwardGain =255/20.0
+motorParams_right.feedForwardGain =265/20.0
 motorParams_right.minPWM = PWM_right
 motorParams_right.pidParameters.minOutput = -255
 motorParams_right.pidParameters.maxOutput = 255

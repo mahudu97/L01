@@ -22,10 +22,9 @@ weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES # In an actual example
 
 mu = 0 # update with actual value
 # sigma values for 20cm dist and pi/2 rotations
-    #TODO: assumes linear sclaing
-sigma_e = 0.2 #0.1
-sigma_f = 0.09038 #0.04519
-sigma_g = 0.0698 #0.03490
+sigma_e = 0.1 * math.sqrt(2)
+sigma_f = 0.04519 * math.sqrt(2)
+sigma_g = 0.03490 * math.sqrt(2)
 
 
 # from particle Data Structures

@@ -22,9 +22,9 @@ weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES # In an actual example
 
 mu = 0 # update with actual value
 # sigma values for 20cm dist and pi/2 rotations
-sigma_e = 0.1 * math.sqrt(2)
-sigma_f = 0.04519 * math.sqrt(2)
-sigma_g = 0.03490 * math.sqrt(2)
+sigma_e = 0.1
+sigma_f = 0.04519
+sigma_g = 0.03490
 
 
 # from particle Data Structures
@@ -66,6 +66,7 @@ def resample():
     global p_theta
     global weights
 
+
     # build array with cumulative weights
     cumulative_weights = [0] * NUMBER_OF_PARTICLES
     cumulative_weights[0] = weights[0]
@@ -96,6 +97,22 @@ def resample():
     # set weights to 1/N
     weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES
 
+def updatePos():
+    global p_x
+    global p_y
+    global p_theta
+    global weights
+    global estimate_x
+    global estimate_y
+    global estimate_theta
+    estimate_x = 0.0
+    estimate_y = 0.0
+    estimate_theta = 0.0
+
+    for i in range(100):
+        estimate_x += p_x[i]*weights[i]
+        estimate_y += p_y[i]*weights[i]
+        estimate_theta += p_theta[i]*weights[i]
 
 
 
@@ -107,6 +124,8 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
 
     # sonar is placed 9cm infront of centre of rotation
     adj_z = z + 9
+
+    print adj_z
 
     #variables used to catch divide by zeros
     c = math.cos(theta)
@@ -129,7 +148,7 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
 
     # find most suitbale m
     walls = mymap.walls
-    smallest_m = ma
+    smallest_m = math.inf
     sm_index = 10
     predicted_m = [ma,mb,mc,md,me,mf,mg,mh]
     # find smallest m - and make sure it is feasible
@@ -187,6 +206,7 @@ def read_sonar():
         time.sleep(0.0045)
     usReadings.sort()
     if usReadings[5] :
+        print "I measured a distance of "+ str(usReadings[5])
         return usReadings[5][0]
     else:
         print "Failed US reading"
@@ -214,18 +234,22 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
     angleRotate = angleDest - estimate_theta
     L01.left_90(angleRotate/1.5708)
     time.sleep(2.5)
+
+    e = sigma_e * math.sqrt(dist/10)
+    f = sigma_f * math.sqrt(dist/10)
+    g = sigma_g * math.sqrt(dist/10)
 	
 	#update all the particles angle
 	for k in range (100):
-        error_g = random.gauss(mu,sigma_g)
+        error_g = random.gauss(mu,g)
         p_theta[k] += angleRotate + error_g
 		
 		
     L01.forward(dist)
-    time.sleep(dist*0.13)
+    time.sleep(dist*0.08)
 	for k in range(100):          #this code is only relevant for correction once a move has been logged
-        error_e = random.gauss(mu,sigma_e)
-        error_f = random.gauss(mu,sigma_f)
+        error_e = random.gauss(mu,e)
+        error_f = random.gauss(mu,f)
         p_x[k] += (dist + error_e) * math.cos(angleDest)
         p_y[k] += (dist + error_e) * math.sin(angleDest)
         p_theta[k] += error_f
@@ -244,11 +268,12 @@ for x,y in waypoints:
 	normalise()
     print "What am I doing?: Resample"
 	resample()
+    print "What am I doing?: Update"
+    updatePos()
     print "What am I doing?: Print"
     particles.data =[]
     for k in range(100):
         particles.data.append((p_x[k], p_y[k], p_theta[k]))
-    # print "drawParticles:" + str(particles.data)
     particles.draw()
 
 L01.interface.terminate()

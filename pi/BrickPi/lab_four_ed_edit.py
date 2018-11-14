@@ -22,9 +22,11 @@ weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES # In an actual example
 
 mu = 0 # update with actual value
 # sigma values for 20cm dist and pi/2 rotations
-sigma_e = 1* 0.1
-sigma_f = 1* 0.04519
-sigma_g = 0.5* 0.03490
+sigma_e = 0.6 # in cm
+sigma_f = 0.0075 # in radians
+sigma_g = 0.006 # in radians
+# avg for a 90 deg rotate
+mean_g = 0.0349066
 
 
 # from particle Data Structures
@@ -197,9 +199,9 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
 	# calculate likelihood
 	mean = smallest_m
 	#sd of sonar
-	sd = 2
+	sd = 3
 	gauss = math.e**(-0.5*(float(adj_z-mean)/sd)**2)
-	K = 0.1
+	K = 0.05
 	likelihood = gauss + K
 	return likelihood
 
@@ -251,6 +253,7 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
 	global sigma_e
 	global sigma_f
 	global sigma_g
+	global mean_g
 
 
 	while(not there_yet(X,Y)):
@@ -264,9 +267,19 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
 		angleRotate = angleDest - estimate_theta
 
 		# rotate robot
-		L01.left_90(angleRotate/1.5708)
-		SleepyTime = max(angleRotate*0.6, 2.5)
-		time.sleep(SleepyTime)
+		if angleRotate <= -math.pi:
+			ar = angleRotate + 2*math.pi
+			L01.left_90(ar/(math.pi/2))
+		elif angleRotate <= 0:
+			ar = -angleRotate
+			L01.right_90(ar/(math.pi/2))
+		elif angleRotate <= math.pi:
+			L01.left_90(angleRotate/(math.pi/2))
+		else:
+			# angleRoate <= 2*math.pi
+			ar = 2*math.pi - angleRotate
+			L01.right_90(ar/(math.pi/2))
+		time.sleep(2)
 
 		# standard deviations for particle simualtion - scaled for distance
 		s_e = sigma_e * math.sqrt(dist/10)
@@ -274,7 +287,9 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
 
 		# update all the particle angles
 		for k in range (100):
-			error_g = random.gauss(mu,sigma_g)
+			# scale mean for actual rotate
+			mean_g = (angleRotate / (math.pi/2)) * mean_g
+			error_g = random.gauss(mean_g,sigma_g)
 			p_theta[k] += angleRotate + error_g
 
 		# move robot forward
@@ -292,15 +307,21 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
 		# read sonar - start of MCL
 		reading = read_sonar()
 
-		update_particles(reading)
+		particles.data = []
+		for k in range(100):
+			particles.data.append((p_x[k], p_y[k], p_theta[k], weights[k]))
 		particles.draw()
+
+		update_particles(reading)
 		normalise()
 		resample()
+		time.sleep(1)
 
 		# re-estimate position based on particles
 		updatePos()
 
 		# print particles to server
+		particles.data = []
 		for k in range(100):
 			particles.data.append((p_x[k], p_y[k], p_theta[k], weights[k]))
 		particles.draw()

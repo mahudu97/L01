@@ -23,10 +23,10 @@ weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES # In an actual example
 mu = 0 # update with actual value
 # sigma values for 20cm dist and pi/2 rotations
 sigma_e = 0.6 # in cm
-sigma_f = 0.0075 # in radians
-sigma_g = 0.006 # in radians
+sigma_f = 0.5 * 180 / math.pi
+sigma_g = 1 * 180 / math.pi 
 # avg for a 90 deg rotate
-mean_g = 0.0349066
+mean_g = 0# 0.0349066
 
 
 # from particle Data Structures
@@ -64,7 +64,6 @@ def normalise():
 		# reset
 		for i in range(NUMBER_OF_PARTICLES):
 			weights[i] = 1 / NUMBER_OF_PARTICLES
-
 
 
 def resample():
@@ -135,8 +134,6 @@ def updatePos():
 		estimate_x += p_x[i]*weights[i]
 		estimate_y += p_y[i]*weights[i]
 		estimate_theta += p_theta[i]*weights[i]
-
-
 
 
 def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plus sonar reading z
@@ -231,6 +228,7 @@ def read_sonar():
 		print "Failed US reading"
 		return read_sonar()
 
+
 def there_yet(X,Y): # compares some goal co-ords to current ones to declare if we are there yet
 	global estimate_x
 	global estimate_y
@@ -239,7 +237,6 @@ def there_yet(X,Y): # compares some goal co-ords to current ones to declare if w
 		return True
 	print "Not there yet"
 	return False
-
 
 
 def navigateToWaypoint(X, Y):  # X,Y are cords of dest
@@ -254,7 +251,6 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
 	global sigma_f
 	global sigma_g
 	global mean_g
-
 
 	while(not there_yet(X,Y)):
 		# calc dist and angle to move still
@@ -307,7 +303,6 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
 		# read sonar - start of MCL
 		reading = read_sonar()
 
-		particles.data = []
 		for k in range(100):
 			particles.data.append((p_x[k], p_y[k], p_theta[k], weights[k]))
 		particles.draw()
@@ -321,13 +316,13 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
 		updatePos()
 
 		# print particles to server
-		particles.data = []
+		# remove particles form presample
+		particles.data = particles.data[:len(particles.data)-100]
 		for k in range(100):
 			particles.data.append((p_x[k], p_y[k], p_theta[k], weights[k]))
 		particles.draw()
 
 waypoints = [(180,30), (180,54), (138,54), (138,168), (114,168), (114,84),(84,84),(83,30)]
-
 
 for x,y in waypoints:
 	#print "What am I doing?: Navigate to waypoint"

@@ -200,7 +200,7 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
 	#sd of sonar
 	sd = 1
 	gauss = math.e**(-0.5*(float(adj_z-mean)/sd)**2)
-	K = 0.01
+	K = 0.0001
 	likelihood = gauss + K
 	return likelihood
 

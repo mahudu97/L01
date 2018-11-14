@@ -20,12 +20,13 @@ p_y = [estimate_y] * NUMBER_OF_PARTICLES
 p_theta = [estimate_theta] * NUMBER_OF_PARTICLES
 weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES # In an actual example these would be updated
 
+# TODO : mu_f, sigma_f, sigma_g - find to get 2 good runs
 mu = 0 # update with actual value
 # sigma values for 20cm dist and pi/2 rotations
 sigma_e = 0.6 # in cm
-mu_f = -0.1 * math.pi / 180
+mu_f = -0.25 * math.pi / 180
 sigma_f = 0.4 * math.pi / 180
-sigma_g = 1 * math.pi /180
+sigma_g = 0.8 * math.pi /180
 # avg for a 90 deg rotate
 mean_g = 0# 0.0349066
 

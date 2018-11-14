@@ -23,7 +23,7 @@ weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES # In an actual example
 mu = 0 # update with actual value
 # sigma values for 20cm dist and pi/2 rotations
 sigma_e = 0.6 # in cm
-mu_f = -0.14 * math.pi / 180
+mu_f = -0.1 * math.pi / 180
 sigma_f = 0.4 * math.pi / 180
 sigma_g = 1 * math.pi /180
 # avg for a 90 deg rotate

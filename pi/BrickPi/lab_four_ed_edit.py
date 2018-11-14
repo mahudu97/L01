@@ -55,17 +55,21 @@ def update_estimate():
 def normalise():
     global weights
     total = sum(weights)
-    for i in range(NUMBER_OF_PARTICLES):
-        weights[i] /= total
+    try:
+        for i in range(NUMBER_OF_PARTICLES):
+            weights[i] /= total
+    except ZeroDivisionError:
+        # reset
+        for i in range(NUMBER_OF_PARTICLES):
+            weights[i] = 1 / NUMBER_OF_PARTICLES
 
 
-#
+
 def resample():
     global p_x
     global p_y
     global p_theta
     global weights
-
 
     # build array with cumulative weights
     cumulative_weights = [0] * NUMBER_OF_PARTICLES
@@ -97,6 +101,8 @@ def resample():
     # set weights to 1/N
     weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES
 
+
+# get new robot position from particles
 def updatePos():
     global p_x
     global p_y
@@ -173,16 +179,15 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
 
     # didn't find a feasible m
     if sm_index == 10:
+        print "no suitable m found"
         return 0
 
     # calculate likelihood
     mean = smallest_m
     #sd of sonar
-    # at 100cm - s.d. = 0.2cm
-    # TODO: ASK GTA ABOUT SCALING
     sd = 2
     gauss = math.e**(-0.5*(float(adj_z-mean)/sd)**2)
-    K = 0.0 # get actual constant for robustnus
+    K = 0.1
     likelihood = gauss + K
     return likelihood
 
@@ -205,24 +210,25 @@ def read_sonar():
         usReadings.append(L01.interface.getSensorValue(L01.us_port))
         time.sleep(0.0045)
     usReadings.sort()
-    if usReadings[5] :
-        print "I measured a distance of "+ str(usReadings[5])
+    if usReadings[5]:
+        # print "I measured a distance of "+ str(usReadings[5])
         return usReadings[5][0]
     else:
         print "Failed US reading"
         return read_sonar()
+
 def there_yet(X,Y): # compares some goal co-ords to current ones to declare if we are there yet
 	global estimate_x
 	global estimate_y
-	
-	if((abs(estimate_x - X)<1) && (abs( estimate_y - Y)<1)):
+    
+    if (abs(estimate_x - X)<1) and (abs( estimate_y - Y)<1):
 		print "We're there!"
 		return true
 	print "Not there yet"
 	return false
 	
 	
-# TODO: 3.3
+
 def navigateToWaypoint(X, Y):  # X,Y are cords of dest
     global estimate_x
     global estimate_y
@@ -236,54 +242,64 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
     global sigma_g
 	
 	
-	while(!there_yet(X,Y)):
-	
-		#print "Silly test " + str(estimate_x) +" "+ str(estimate_y) +" "+str(estimate_theta)
+	while(not there_yet(X,Y)):
+        # calc dist and angle to move still
 		x_diff = X-estimate_x
 		y_diff = Y-estimate_y
-		dist = min((x_diff**2 + y_diff**2)**0.5 , 20)
+        dist = x_diff**2 + y_diff**2)**0.5
+		# 20cm bursts
+        dist = min(dist, 20)
 		angleDest = math.atan2(y_diff,x_diff) # returns an angle between - pi  and pi
 		angleRotate = angleDest - estimate_theta
-		L01.left_90(angleRotate/1.5708)
-		time.sleep(2.5)
 
+        # rotate robot
+		L01.left_90(angleRotate/1.5708)
+		time.sleep(0.6 * angleRotate)
+
+        # standard deviations for particle simualtion - scaled for distance
 		e = sigma_e * math.sqrt(dist/10)
 		f = sigma_f * math.sqrt(dist/10)
 		g = sigma_g * math.sqrt(dist/10)
 		
-		#update all the particles angle
+		# update all the particle angles
 		for k in range (100):
 			error_g = random.gauss(mu,g)
 			p_theta[k] += angleRotate + error_g
 			
-			
+		# move robot forward
 		L01.forward(dist)
 		time.sleep(dist*0.08)
-		for k in range(100):          #this code is only relevant for correction once a move has been logged
+
+        # update all the particle positions
+		for k in range(100):
 			error_e = random.gauss(mu,e)
 			error_f = random.gauss(mu,f)
 			p_x[k] += (dist + error_e) * math.cos(angleDest)
 			p_y[k] += (dist + error_e) * math.sin(angleDest)
 			p_theta[k] += error_f
 			
+        # read sonar - start of MCL
 		reading = read_sonar()
 		print "Debug, reading is " + str(reading)
 		# a reading of 255 corresponds to a failed reading
 		
-		if (reading < 200): # only want to do these when we get valid readings
+        # if a valid reading
+		if (reading < 200):
 			update_particles(reading)
 			normalise()
 			resample()
 		updatePos()
+
+        # print particles to server
 		for k in range(100):
-        particles.data.append((p_x[k], p_y[k], p_theta[k],weights[k]))
-    particles.draw()	
+            particles.data.append((p_x[k], p_y[k], p_theta[k], weights[k]))
+        particles.draw()	
 
 waypoints = [(180,30), (180,54), (138,54), (138,168), (114,168), (114,184),(84,84),(83,30)]
 
 
 for x,y in waypoints:
-    print "What am I doing?: Navigate to waypoint"
+    #print "What am I doing?: Navigate to waypoint"
 	navigateToWaypoint(x,y)
     
 

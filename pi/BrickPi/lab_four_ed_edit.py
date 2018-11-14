@@ -23,8 +23,9 @@ weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES # In an actual example
 mu = 0 # update with actual value
 # sigma values for 20cm dist and pi/2 rotations
 sigma_e = 0.6 # in cm
-sigma_f = 0.5 * 180 / math.pi
-sigma_g = 1 * 180 / math.pi 
+mu_f = -0.14 * math.pi / 180
+sigma_f = 0.4 * math.pi / 180
+sigma_g = 1 * math.pi /180
 # avg for a 90 deg rotate
 mean_g = 0# 0.0349066
 
@@ -196,9 +197,9 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
 	# calculate likelihood
 	mean = smallest_m
 	#sd of sonar
-	sd = 3
+	sd = 1
 	gauss = math.e**(-0.5*(float(adj_z-mean)/sd)**2)
-	K = 0.05
+	K = 0.01
 	likelihood = gauss + K
 	return likelihood
 
@@ -248,6 +249,7 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
 	global p_theta
 	global mu
 	global sigma_e
+	global mu_f
 	global sigma_f
 	global sigma_g
 	global mean_g
@@ -295,9 +297,9 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
 		# update all the particle positions
 		for k in range(100):
 			error_e = random.gauss(mu,s_e)
-			error_f = random.gauss(mu,s_f)
-			p_x[k] += (dist + error_e) * math.cos(angleDest)
-			p_y[k] += (dist + error_e) * math.sin(angleDest)
+			error_f = random.gauss(mu_f,s_f)
+			p_x[k] += (dist + error_e) * math.cos(angleDest+error_f)
+			p_y[k] += (dist + error_e) * math.sin(angleDest+error_f)
 			p_theta[k] += error_f
 
 		# read sonar - start of MCL

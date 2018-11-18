@@ -202,7 +202,21 @@ def recognize_location():
 signatures = SignatureContainer(5)
 #signatures.delete_loc_files()
 
-learn_location()
+for i in range(5):
+    print "Place the robot at the waypoint."
+    ans = "N"
+    while ans != "Y":
+        print "Ready? Y/N"
+        ans = input()
+
+    learn_location()
+
+print "Now place robot in position for matching"
+ans = "N"
+while ans != "Y":
+        print "Ready? Y/N"
+        ans = input()
+
 recognize_location()
 
 

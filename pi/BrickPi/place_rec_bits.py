@@ -2,12 +2,15 @@
 # By Jacek Zienkiewicz and Andrew Davison, Imperial College London, 2014
 # Based on original C code by Adrien Angeli, 2009
 
+import batmobile as L01
+import time
 import random
 import os
 
 # Location signature class: stores a signature characterizing one location
 class LocationSignature:
-    def __init__(self, no_bins = 360):
+    # 5 degrees rotation
+    def __init__(self, no_bins = 72):
         self.sig = [0] * no_bins
         
     def print_signature(self):
@@ -76,12 +79,26 @@ class SignatureContainer():
             print "WARNING: Signature does not exist."
         
         return ls
-        
-# FILL IN: spin robot or sonar to capture a signature and store it in ls
+
+
+# getting a sonar reading
+def read_sonar():
+    usReadings = []
+    for i in range(11):
+        usReadings.append(L01.interface.getSensorValue(L01.us_port))
+        time.sleep(0.0045)
+    usReadings.sort()
+    if usReadings[5] :
+        return usReadings[5][0]
+    else:
+        print "Failed US reading"
+        return read_sonar()
+
 def characterize_location(ls):
-    print "TODO:    You should implement the function that captures a signature."
     for i in range(len(ls.sig)):
-        ls.sig[i] = random.randint(0, 255)
+        # read
+        ls.sig[i] = read_sonar()
+        L01.left_90(5/90) # rotate 5 deg for next reading
 
 # FILL IN: compare two signatures
 def compare_signatures(ls1, ls2):
@@ -93,6 +110,7 @@ def compare_signatures(ls1, ls2):
 # signature into the next available file.
 def learn_location():
     ls = LocationSignature()
+    # gets sonar readings
     characterize_location(ls)
     idx = signatures.get_free_index();
     if (idx == -1): # run out of signature files
@@ -131,6 +149,6 @@ signatures = SignatureContainer(5);
 #signatures.delete_loc_files()
 
 learn_location();
-recognize_location();
+#recognize_location();
 
 

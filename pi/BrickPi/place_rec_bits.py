@@ -109,15 +109,46 @@ def make_histogram(x): #take a LocationSignature in distance/angle space, and re
 		hist[value]+=1
 	return hist
 
+# angle invariant
 def compare_signatures(ls1, ls2):
     dist = 0
-    # TODO - call Ed's stuff to get histogram of depths
     a1 = make_histogram(ls1)
     a2 = make_histogram(ls2)
     # sum of differences squared
     for i in range(len(a1)):
         dist += (a1[i]-a2[i])**2
     return dist
+
+# angle variant - pass in arrays
+def compare_signatures_simple(ls1, ls2):
+    dist = 0
+    # sum of differences squared
+    for i in range(len(ls1.sig)):
+        dist += (ls1.sig[i]-ls2.sig[i])**2
+    return dist
+
+def find_rotation(obs, pred):
+    # array to shift by 1 at end of each iteration
+    shifted = []
+    for i in range(len(obs.sig)):
+        shifted.append( obs.sig[i] )
+
+    matching_angle = 0
+    best_dist = 99999999999999999999
+
+    for i in range(len(obs.sig)):
+        dist = compare_signatures_simple(shifted, pred.sig)
+        if dist < best_dist:
+            best_dist = dist
+            matching_angle = i*5
+        # now left rotat shifted
+        shifted = shifted[1:] + shifted [0]
+
+    if matching_angle > 180:
+        matching_angle -= 360
+
+    return matching_angle
+
 
 # This function characterizes the current location, and stores the obtained 
 # signature into the next available file.
@@ -154,9 +185,14 @@ def recognize_location():
         ls_read = signatures.read(idx)
         dist    = compare_signatures(ls_obs, ls_read)
         if dist < smallest_dist:
+            smallest_dist = dist
             best_match = idx
-
-    print "We are at location " + str(idx)
+    # at this location
+    print "We are at location " + str(best_match)
+    # now rotation
+    ls_pred = signatures.read(best_match)
+    rot = find_rotation(ls_obs, ls_pred)
+    print "We are " + str(rot) + "degrees from x-axis at this position"
 
 # Prior to starting learning the locations, it should delete files from previous
 # learning either manually or by calling signatures.delete_loc_files(). 

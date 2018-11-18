@@ -200,7 +200,7 @@ def recognize_location():
 # recognize one of them, if locations have already been learned.
 
 signatures = SignatureContainer(5)
-#signatures.delete_loc_files()
+signatures.delete_loc_files()
 
 for i in range(5):
     print "Place the robot at the waypoint."

@@ -17,5 +17,6 @@ L01 = batmobile
 
 for i in range (360/5):
     L01.right_90(5/90)
+    time.sleep(0.5)
 
 print "Square complete!"

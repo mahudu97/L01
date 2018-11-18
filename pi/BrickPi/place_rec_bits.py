@@ -4,6 +4,7 @@
 
 import batmobile as L01
 import time
+import math
 import random
 import os
 
@@ -100,12 +101,19 @@ def characterize_location(ls):
         ls.sig[i] = read_sonar()
         L01.left_90(5/90) # rotate 5 deg for next reading
 
-# FILL IN: compare two signatures
+def make_histogram(x): #take a LocationSignature in distance/angle space, and returns a LocationSignature in frequency/distance space
+	# distance will be discretised into chunks of 8cm
+	hist = [0]*32 # going to count how many occurences of each distance
+	for i in range(len(x.sig)):
+		value = math.floor(x.sig[i]/8)
+		hist[value]+=1
+	return hist
+
 def compare_signatures(ls1, ls2):
     dist = 0
     # TODO - call Ed's stuff to get histogram of depths
-    a1 = ls1.sig
-    a2 = ls2.sig
+    a1 = make_histogram(ls1)
+    a2 = make_histogram(ls2)
     # sum of differences squared
     for i in range(len(a1)):
         dist += (a1[i]-a2[i])**2
@@ -117,7 +125,7 @@ def learn_location():
     ls = LocationSignature()
     # gets sonar readings
     characterize_location(ls)
-    idx = signatures.get_free_index();
+    idx = signatures.get_free_index()
     if (idx == -1): # run out of signature files
         print "\nWARNING:"
         print "No signature file is available. NOTHING NEW will be learned and stored."
@@ -136,24 +144,29 @@ def learn_location():
 #      actual characterization is the smallest.
 # 4.   Display the index of the recognized location on the screen
 def recognize_location():
-    ls_obs = LocationSignature();
-    characterize_location(ls_obs);
+    ls_obs = LocationSignature()
+    characterize_location(ls_obs)
 
-    # FILL IN: COMPARE ls_read with ls_obs and find the best match
+    best_match = 0
+    smallest_dist = 9999999999999999999
     for idx in range(signatures.size):
         print "STATUS:  Comparing signature " + str(idx) + " with the observed signature."
-        ls_read = signatures.read(idx);
+        ls_read = signatures.read(idx)
         dist    = compare_signatures(ls_obs, ls_read)
+        if dist < smallest_dist:
+            best_match = idx
+
+    print "We are at location " + str(idx)
 
 # Prior to starting learning the locations, it should delete files from previous
 # learning either manually or by calling signatures.delete_loc_files(). 
 # Then, either learn a location, until all the locations are learned, or try to
 # recognize one of them, if locations have already been learned.
 
-signatures = SignatureContainer(5);
+signatures = SignatureContainer(5)
 #signatures.delete_loc_files()
 
-learn_location();
-#recognize_location();
+learn_location()
+recognize_location()
 
 

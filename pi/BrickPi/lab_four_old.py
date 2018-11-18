@@ -22,12 +22,9 @@ weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES # In an actual example
 
 mu = 0 # update with actual value
 # sigma values for 20cm dist and pi/2 rotations
-sigma_e = 0.65 # in cm
-mu_f = -0.11 * math.pi / 180
-sigma_f = 0.45 * math.pi / 180
-sigma_g = 0.8 * math.pi /180
-# avg for a 90 deg rotate
-mean_g = 0# 0.0349066
+sigma_e = 0.1
+sigma_f = 0.04519
+sigma_g = 0.03490
 
 
 # from particle Data Structures
@@ -58,20 +55,20 @@ def update_estimate():
 def normalise():
     global weights
     total = sum(weights)
-    try:
+    for i in range(NUMBER_OF_PARTICLES):
+        weights[i] /= total
+    if total == 0:
         for i in range(NUMBER_OF_PARTICLES):
-            weights[i] /= total
-    except ZeroDivisionError:
-        # reset
-        for i in range(NUMBER_OF_PARTICLES):
-            weights[i] = 1 / NUMBER_OF_PARTICLES
+            weights[i] = 0.1
 
 
+#
 def resample():
     global p_x
     global p_y
     global p_theta
     global weights
+
 
     # build array with cumulative weights
     cumulative_weights = [0] * NUMBER_OF_PARTICLES
@@ -79,13 +76,6 @@ def resample():
     for i in range(1, NUMBER_OF_PARTICLES):
         cumulative_weights[i] = cumulative_weights[i-1] \
                                     + weights[i]
-
-    smallest = 999999999
-    largest = -99999999999
-    for e in p_theta:
-        smallest = min(smallest,e)
-        largest = max(largest,e)
-    print "BEFORE RESAMPLE: smallest theta: ", smallest, " largest theta: ", largest
 
     # tmp particle arrays
     p_x_tmp = [0.0] * NUMBER_OF_PARTICLES
@@ -107,18 +97,9 @@ def resample():
     p_y     = p_y_tmp
     p_theta = p_theta_tmp
 
-    smallest = 9999999
-    largest = -9999999
-    for e in p_theta:
-        smallest = min(smallest,e)
-        largest = max(largest,e)
-    print "AFTER RESAMPLE: smallest theta: ", smallest, " largest theta: ", largest
-
     # set weights to 1/N
     weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES
 
-
-# get new robot position from particles
 def updatePos():
     global p_x
     global p_y
@@ -137,13 +118,17 @@ def updatePos():
         estimate_theta += p_theta[i]*weights[i]
 
 
+
+
 def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plus sonar reading z
     # adjust for systematic sonar error
     if z >45:
         z = 0.99*z
 
     # sonar is placed 9cm infront of centre of rotation
-    adj_z = z + 8
+    adj_z = z + 9
+
+    print adj_z
 
     #variables used to catch divide by zeros
     c = math.cos(theta)
@@ -152,7 +137,7 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
         c+=0.00000001
     if s==0:
         s+=0.00000001
-
+        
 
     # calc current particles distance to each wall's infinite line form
     ma =((168 -   0)*(  0 - x) - (  0 -   0)*(  0 - y))/((168 -   0)*c - (  0 -   0)*s)
@@ -191,15 +176,16 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
 
     # didn't find a feasible m
     if sm_index == 10:
-        #print "no suitable m found"
         return 0
 
     # calculate likelihood
     mean = smallest_m
     #sd of sonar
-    sd = 1
+    # at 100cm - s.d. = 0.2cm
+    # TODO: ASK GTA ABOUT SCALING
+    sd = 2
     gauss = math.e**(-0.5*(float(adj_z-mean)/sd)**2)
-    K = 0.00001
+    K = 0.0 # get actual constant for robustnus
     likelihood = gauss + K
     return likelihood
 
@@ -222,24 +208,13 @@ def read_sonar():
         usReadings.append(L01.interface.getSensorValue(L01.us_port))
         time.sleep(0.0045)
     usReadings.sort()
-    if usReadings[5]:
-        # print "I measured a distance of "+ str(usReadings[5])
-        return usReadings[5][0]
+    if usReadings[5] :
+        return min(usReadings[5][0],160)
     else:
         print "Failed US reading"
         return read_sonar()
 
-
-def there_yet(X,Y): # compares some goal co-ords to current ones to declare if we are there yet
-    global estimate_x
-    global estimate_y
-    if (abs(estimate_x - X)<1) and (abs( estimate_y - Y)<1):
-        print "We're there!"
-        return True
-    print "Not there yet"
-    return False
-
-
+# TODO: 3.3
 def navigateToWaypoint(X, Y):  # X,Y are cords of dest
     global estimate_x
     global estimate_y
@@ -249,86 +224,54 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
     global p_theta
     global mu
     global sigma_e
-    global mu_f
     global sigma_f
     global sigma_g
-    global mean_g
 
-    while(not there_yet(X,Y)):
-        # calc dist and angle to move still
-        x_diff = X-estimate_x
-        y_diff = Y-estimate_y
-        dist = (x_diff**2 + y_diff**2)**0.5
-        # 20cm bursts
-        dist = min(dist, 20)
-        angleDest = math.atan2(y_diff,x_diff) # returns an angle between - pi  and pi
-        angleRotate = angleDest - estimate_theta
 
-        # rotate robot
-        if angleRotate <= -math.pi:
-            ar = angleRotate + 2*math.pi
-            L01.left_90(ar/(math.pi/2))
-        elif angleRotate <= 0:
-            ar = -angleRotate
-            L01.right_90(ar/(math.pi/2))
-        elif angleRotate <= math.pi:
-            L01.left_90(angleRotate/(math.pi/2))
-        else:
-            # angleRoate <= 2*math.pi
-            ar = 2*math.pi - angleRotate
-            L01.right_90(ar/(math.pi/2))
-        time.sleep(2)
+    #print "Silly test " + str(estimate_x) +" "+ str(estimate_y) +" "+str(estimate_theta)
+    x_diff = X-estimate_x
+    y_diff = Y-estimate_y
+    dist = (x_diff**2 + y_diff**2)**0.5
+    angleDest = math.atan2(y_diff,x_diff) # returns an angle between - pi  and pi
+    angleRotate = angleDest - estimate_theta
+    L01.left_90(angleRotate/1.5708)
+    time.sleep(2.5)
 
-        # standard deviations for particle simualtion - scaled for distance
-        s_e = sigma_e * math.sqrt(dist/10)
-        s_f = sigma_f * math.sqrt(dist/10)
+    e = sigma_e * math.sqrt(dist/10)
+    f = sigma_f * math.sqrt(dist/10)
+    g = sigma_g * math.sqrt(dist/10)
+    
+    #update all the particles angle
+    for k in range (100):
+        error_g = random.gauss(mu,g)
+        p_theta[k] += angleRotate + error_g
+        
+        
+    L01.forward(dist)
+    time.sleep(dist*0.08)
+    for k in range(100):          #this code is only relevant for correction once a move has been logged
+        error_e = random.gauss(mu,e)
+        error_f = random.gauss(mu,f)
+        p_x[k] += (dist + error_e) * math.cos(angleDest)
+        p_y[k] += (dist + error_e) * math.sin(angleDest)
+        p_theta[k] += error_f
 
-        # update all the particle angles
-        for k in range (100):
-            # scale mean for actual rotate
-            mean_g = (angleRotate / (math.pi/2)) * mean_g
-            error_g = random.gauss(mean_g,sigma_g)
-            p_theta[k] += angleRotate + error_g
+waypoints = [(104,30),(124,30),(144,30),(164,30),(180,30),(180,50),(180,54),(160,54),(140,54),(138,54),(138,74),(138,94),(138,114),(138,134),(138,154),(138,168),(118,168),(114,168),(114,148),(114,128),(114,108),(114,88),(114,84),(94,84),(84,84),(84,64),(84,44),(84,30)]
 
-        # move robot forward
-        L01.forward(dist)
-        time.sleep(dist*0.08)
-
-        # update all the particle positions
-        for k in range(100):
-            error_e = random.gauss(mu,s_e)
-            error_f = random.gauss(mu_f,s_f)
-            p_x[k] += (dist + error_e) * math.cos(angleDest+error_f)
-            p_y[k] += (dist + error_e) * math.sin(angleDest+error_f)
-            p_theta[k] += error_f
-
-        # read sonar - start of MCL
-        reading = read_sonar()
-
-        for k in range(100):
-            particles.data.append((p_x[k], p_y[k], p_theta[k], weights[k]))
-        particles.draw()
-
-        update_particles(reading)
-        normalise()
-        resample()
-        time.sleep(1)
-
-        # re-estimate position based on particles
-        updatePos()
-
-        # print particles to server
-        # remove particles form presample
-        particles.data = particles.data[:len(particles.data)-100]
-        for k in range(100):
-            particles.data.append((p_x[k], p_y[k], p_theta[k], weights[k]))
-        particles.draw()
-
-waypoints = [(180,30), (180,54), (138,54), (138,168), (114,168), (114,84),(84,84),(83,30)]
 
 for x,y in waypoints:
-    #print "What am I doing?: Navigate to waypoint"
+    print "What am I doing?: Navigate to waypoint"
     navigateToWaypoint(x,y)
-
+    reading = read_sonar()   
+    update_particles(reading)
+    normalise()
+    resample()
+    
+    updatePos()
+    print "What am I doing?: Print"
+    particles.data =[]
+    for k in range(100):
+        particles.data.append((p_x[k], p_y[k], p_theta[k],weights[k]))
+    particles.draw()
 
 L01.interface.terminate()

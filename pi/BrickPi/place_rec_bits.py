@@ -103,7 +103,12 @@ def characterize_location(ls):
 # FILL IN: compare two signatures
 def compare_signatures(ls1, ls2):
     dist = 0
-    print "TODO:    You should implement the function that compares two signatures."
+    # TODO - call Ed's stuff to get histogram of depths
+    a1 = ls1.sig
+    a2 = ls2.sig
+    # sum of differences squared
+    for i in range(len(a1)):
+        dist += (a1[i]-a2[i])**2
     return dist
 
 # This function characterizes the current location, and stores the obtained 

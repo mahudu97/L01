@@ -99,14 +99,14 @@ def characterize_location(ls):
     for i in range(len(ls.sig)):
         # read
         ls.sig[i] = read_sonar()
-        L01.left_90(5/90) # rotate 5 deg for next reading
-
+        L01.left_90(0.05555555555) # rotate 5 deg for next reading
+	time.sleep(1)	
 def make_histogram(x): #take a LocationSignature in distance/angle space, and returns a LocationSignature in frequency/distance space
 	# distance will be discretised into chunks of 8cm
 	hist = [0]*32 # going to count how many occurences of each distance
 	for i in range(len(x.sig)):
 		value = math.floor(x.sig[i]/8)
-		hist[value]+=1
+		hist[int(value)]+=1
 	return hist
 
 # angle invariant
@@ -123,8 +123,8 @@ def compare_signatures(ls1, ls2):
 def compare_signatures_simple(ls1, ls2):
     dist = 0
     # sum of differences squared
-    for i in range(len(ls1.sig)):
-        dist += (ls1.sig[i]-ls2.sig[i])**2
+    for i in range(len(ls1)):
+        dist += (ls1[i]-ls2[i])**2
     return dist
 
 def find_rotation(obs, pred):
@@ -142,7 +142,9 @@ def find_rotation(obs, pred):
             best_dist = dist
             matching_angle = i*5
         # now left rotat shifted
-        shifted = shifted[1:] + shifted [0]
+	first = shifted[0]
+        shifted = shifted[1:]
+	shifted.append(first)
 
     if matching_angle > 180:
         matching_angle -= 360
@@ -200,16 +202,15 @@ def recognize_location():
 # recognize one of them, if locations have already been learned.
 
 signatures = SignatureContainer(5)
-signatures.delete_loc_files()
+#signatures.delete_loc_files()
 
-for i in range(5):
-    print "Place the robot at the waypoint."
-    ans = "N"
-    while ans != "Y":
-        print "Ready? Y/N"
-        ans = input()
-
-    learn_location()
+#for i in range(5):
+#    print "Place the robot at the waypoint."
+#    ans = "n"
+#    while ans != "y":
+#       ans = input("Ready? y/n\n")
+#
+#    learn_location()
 
 print "Now place robot in position for matching"
 ans = "N"

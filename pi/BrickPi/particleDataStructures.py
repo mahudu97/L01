@@ -93,12 +93,15 @@ def init_world(mymap):
     mymap.add_wall((138,49,138,59))     #v4
     mymap.add_wall((133,168,143,168))   #h5
     mymap.add_wall((138,163,138,173))   #v5
-    mymap.add_wall((109,168,119,168))   #h6
-    mymap.add_wall((114,163,114,173))   #v6
-    mymap.add_wall((109,84,119,84))     #h7
-    mymap.add_wall((114,79,114,89))     #v7
-    mymap.add_wall((79,84,89,84))       #h8
-    mymap.add_wall((84,79,84,89))       #v8
+    # mymap.add_wall((109,168,119,168))   #h6
+    # mymap.add_wall((114,163,114,173))   #v6
+    # mymap.add_wall((109,84,119,84))     #h7
+    # mymap.add_wall((114,79,114,89))     #v7
+    # mymap.add_wall((79,84,89,84))       #h8
+    # mymap.add_wall((84,79,84,89))       #v8
     ########################################
 
     mymap.draw()
+
+
+    

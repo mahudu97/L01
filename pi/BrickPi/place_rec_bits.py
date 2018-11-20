@@ -75,7 +75,7 @@ class SignatureContainer():
                 s = f.readline()
                 if (s != ''):
                     ls.sig[i] = int(s)
-            f.close();
+            f.close()
         else:
             print "WARNING: Signature does not exist."
         
@@ -100,12 +100,12 @@ def characterize_location(ls):
         # read
         ls.sig[i] = read_sonar()
         L01.left_90(0.05555555555) # rotate 5 deg for next reading
-	time.sleep(1)	
+	time.sleep(0.3)	
 def make_histogram(x): #take a LocationSignature in distance/angle space, and returns a LocationSignature in frequency/distance space
 	# distance will be discretised into chunks of 8cm
-	hist = [0]*32 # going to count how many occurences of each distance
+	hist = [0]*64 # going to count how many occurences of each distance
 	for i in range(len(x.sig)):
-		value = math.floor(x.sig[i]/8)
+		value = math.floor(x.sig[i]/4)
 		hist[int(value)]+=1
 	return hist
 
@@ -194,7 +194,8 @@ def recognize_location():
     # now rotation
     ls_pred = signatures.read(best_match)
     rot = find_rotation(ls_obs, ls_pred)
-    print "We are " + str(rot) + "degrees from x-axis at this position"
+    print "We are " + str(-rot) + "degrees from x-axis at this position"
+    return (best_match, -rot)
 
 # Prior to starting learning the locations, it should delete files from previous
 # learning either manually or by calling signatures.delete_loc_files(). 
@@ -212,12 +213,12 @@ signatures = SignatureContainer(5)
 #
 #    learn_location()
 
-print "Now place robot in position for matching"
-ans = "N"
-while ans != "Y":
-        print "Ready? Y/N"
-        ans = input()
+# print "Now place robot in position for matching"
+# ans = "N"
+# while ans != "Y":
+#         print "Ready? Y/N"
+#         ans = input()
 
-recognize_location()
+# recognize_location()
 
 

@@ -19,7 +19,7 @@ for x,y in start_points:
         estimate_x = x
         estimate_y = y
 
-estimate_theta = angle_rot
+estimate_theta = angle_rot * math.pi/180
 
 
 #######FROM LAB FOUR#################

@@ -190,7 +190,7 @@ def recognize_location():
             smallest_dist = dist
             best_match = idx
     # at this location
-    print "We are at location " + str(best_match)
+    print "We are at location " + str(best_match+1)
     # now rotation
     ls_pred = signatures.read(best_match)
     rot = find_rotation(ls_obs, ls_pred)

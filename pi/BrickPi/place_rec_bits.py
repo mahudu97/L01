@@ -100,7 +100,8 @@ def characterize_location(ls):
         # read
         ls.sig[i] = read_sonar()
         L01.left_90(0.05555555555) # rotate 5 deg for next reading
-	time.sleep(0.3)	
+        time.sleep(0.3)
+
 def make_histogram(x): #take a LocationSignature in distance/angle space, and returns a LocationSignature in frequency/distance space
 	# distance will be discretised into chunks of 8cm
 	hist = [0]*64 # going to count how many occurences of each distance

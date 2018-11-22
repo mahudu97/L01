@@ -96,11 +96,14 @@ def read_sonar():
         return read_sonar()
 
 def characterize_location(ls):
-    for i in range(len(ls.sig)):
-        # read
+    #for i in range(len(ls.sig)):
+    # read
+    ls.sig[0] = read_sonar()
+    L01.left_90(4) # rotate 5 deg for next reading
+    # time.sleep(0.05)
+    for i in range (1,72):
         ls.sig[i] = read_sonar()
-        L01.left_90(0.05555555555) # rotate 5 deg for next reading
-        time.sleep(0.3)
+        time.sleep(0.05)
 
 def make_histogram(x): #take a LocationSignature in distance/angle space, and returns a LocationSignature in frequency/distance space
 	# distance will be discretised into chunks of 8cm
@@ -156,10 +159,18 @@ def find_rotation(obs, pred):
 # This function characterizes the current location, and stores the obtained 
 # signature into the next available file.
 def learn_location():
-    ls = LocationSignature()
+    lsa = LocationSignature()
+    lsb = LocationSignature()
+    lsc = LocationSignature()
+    ls  = LocationSignature()
     # gets sonar readings
-    characterize_location(ls)
+    characterize_location(lsa)
+    characterize_location(lsb)
+    characterize_location(lsc)
     idx = signatures.get_free_index()
+    
+    for i in range(max(len(lsa), len(lsb), len(lsc))):
+        ls.sig[i] = (lsa.sig[i] + lsb.sig[i] +lsc.sig[i])/3
     if (idx == -1): # run out of signature files
         print "\nWARNING:"
         print "No signature file is available. NOTHING NEW will be learned and stored."
@@ -206,13 +217,13 @@ def recognize_location():
 signatures = SignatureContainer(5)
 #signatures.delete_loc_files()
 
-#for i in range(5):
-#    print "Place the robot at the waypoint."
-#    ans = "n"
-#    while ans != "y":
-#       ans = input("Ready? y/n\n")
-#
-#    learn_location()
+for i in range(5):
+   print "Place the robot at the waypoint."
+   ans = "n"
+   while ans != "y":
+      ans = input("Ready? y/n\n")
+
+   learn_location()
 
 # print "Now place robot in position for matching"
 # ans = "N"

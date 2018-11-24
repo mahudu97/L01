@@ -268,7 +268,7 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
         y_diff = Y-estimate_y
         dist = (x_diff**2 + y_diff**2)**0.5
         # 20cm bursts
-        dist = min(dist, 20)
+        dist = min(dist, 30)
         angleDest = math.atan2(y_diff,x_diff) # returns an angle between - pi  and pi
         angleRotate = angleDest - estimate_theta
 
@@ -300,7 +300,7 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
 
         # move robot forward
         L01.forward(dist)
-        time.sleep(dist*0.08)
+        time.sleep(dist*0.05)
 
         # update all the particle positions
         for k in range(100):

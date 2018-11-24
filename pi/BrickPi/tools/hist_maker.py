@@ -14,14 +14,14 @@ hist2 = [0]*64 # going to count how many occurences of each distance
 wa_2 = 0
 for i in range(len(way2)):
     value = math.floor(int(way2[i])/4)
-    wa_2 += value**(i*8)
+    #wa_2 += value**(i*8)
     hist2[int(value)]+=1
 
 hist3 = [0]*64 # going to count how many occurences of each distance
 wa_3 = 0
 for i in range(len(way3)):
     value = math.floor(int(way3[i])/4)
-    wa_3 += value**(i*8)
+    #wa_3 += value**(i*8)
     hist3[int(value)]+=1
 
 for i in range(len(hist2)):
@@ -29,8 +29,8 @@ for i in range(len(hist2)):
     table2.write(str(hist2[i])+'\n')
     table3.write(str(hist3[i])+'\n')
 
-table2.write("\nWeighted Avg for 2: "+str(wa_2)+'\n')
-table3.write("\nWeighted Avg for 3: "+str(wa_3)+'\n')
+#table2.write("\nWeighted Avg for 2: "+str(wa_2)+'\n')
+#table3.write("\nWeighted Avg for 3: "+str(wa_3)+'\n')
 
 
 table2.close()

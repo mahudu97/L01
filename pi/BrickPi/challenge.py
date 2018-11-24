@@ -351,7 +351,7 @@ waypoint5 = [(138,54), (180,54), (180,30),   (84,30), (138,168)]
 waypoint_set = [waypoint1, waypoint2, waypoint3, waypoint4, waypoint5]
 
 #Follow pre-planned route for each differnt location
-for x,y in waypoint_set[idx+1]:
+for x,y in waypoint_set[idx]:
     #print "What am I doing?: Navigate to waypoint"
     navigateToWaypoint(x,y)
     #sleep for 1s to show L01 has corrrectly located the point

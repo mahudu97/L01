@@ -96,20 +96,11 @@ def read_sonar():
         return read_sonar()
 
 def characterize_location(ls):
-    #for i in range(len(ls.sig)):
-    # read
-    ls.sig[0] = read_sonar()
-    L01.left_90(4) # rotate 5 deg for next reading
-    # time.sleep(0.05)
-    for i in range (1,46):
+    for i in range(len(ls.sig)):
+        # read
         ls.sig[i] = read_sonar()
-        time.sleep(0.05)
-    # slower
-    # for i in range(len(ls.sig)):
-    #     # read
-    #     ls.sig[i] = read_sonar()
-    #     L01.left_90(0.05555555555) # rotate 5 deg for next reading
-    #     time.sleep(0.3)
+        L01.left_90(0.05555555555) # rotate 5 deg for next reading
+        time.sleep(0.3)
 
 def make_histogram(x): #take a LocationSignature in distance/angle space, and returns a LocationSignature in frequency/distance space
 	# distance will be discretised into chunks of 8cm

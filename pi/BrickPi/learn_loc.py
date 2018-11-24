@@ -104,12 +104,11 @@ def characterize_location(ls):
         ans = "n"
         while ans != "y":
             ans = input("Ready? y/n\n")
-        ls.sig[0] += read_sonar()
-        L01.left_90(4)
-        # time.sleep(0.05)
-        for i in range (1,46):
+        for i in range(len(ls.sig)):
+            # read
             ls.sig[i] += read_sonar()
-            time.sleep(0.05)
+            L01.left_90(0.05555555555) # rotate 5 deg for next reading
+            time.sleep(0.3)
     # avg
     for i in range(len(ls.sig)):
         ls.sig[i] /= 3

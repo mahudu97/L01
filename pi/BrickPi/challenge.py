@@ -21,14 +21,6 @@ for x,y in start_points:
 
 estimate_theta = angle_rot * math.pi/180
 
-
-#######FROM LAB FOUR#################
-# current estimate of L01's position
-# estimate_theta = 0.0
-# estimate_x = 84.0
-# estimate_y = 30.0
-
-
 # initialise particles
 NUMBER_OF_PARTICLES = 100
 p_x = [estimate_x] * NUMBER_OF_PARTICLES # At the start every particle has its intial coords as 0,0,0
@@ -101,7 +93,7 @@ def resample():
     for e in p_theta:
         smallest = min(smallest,e)
         largest = max(largest,e)
-    print "BEFORE RESAMPLE: smallest theta: ", smallest, " largest theta: ", largest
+    #print "BEFORE RESAMPLE: smallest theta: ", smallest, " largest theta: ", largest
 
     # tmp particle arrays
     p_x_tmp = [0.0] * NUMBER_OF_PARTICLES
@@ -128,7 +120,7 @@ def resample():
     for e in p_theta:
         smallest = min(smallest,e)
         largest = max(largest,e)
-    print "AFTER RESAMPLE: smallest theta: ", smallest, " largest theta: ", largest
+    #print "AFTER RESAMPLE: smallest theta: ", smallest, " largest theta: ", largest
 
     # set weights to 1/N
     weights = [1.0/NUMBER_OF_PARTICLES] * NUMBER_OF_PARTICLES
@@ -158,7 +150,7 @@ def calculate_likelihood(x, y, theta, z): #current state of particle (x,y,0) plu
     if z >45:
         z = 0.99*z
 
-    # sonar is placed 9cm infront of centre of rotation
+    # sonar is placed 8cm infront of centre of rotation
     adj_z = z + 8
 
     #variables used to catch divide by zeros
@@ -341,7 +333,9 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
         particles.draw()
 
 
-
+# Its goal is to work out where it is, then navigate as quickly as possible to all four of the other
+# four marked waypoints in any order, and finally to return to the waypoint it was originally placed
+# at.
 waypoint0 = [(180,30), (180,54), (138,54), (138,168)]
 waypoint1 = [(180,54), (138,54), ( 84,30), (138,168)]
 waypoint2 = [(180,30),  (84,30), (138,54), (138,168)]

@@ -336,16 +336,22 @@ def navigateToWaypoint(X, Y):  # X,Y are cords of dest
 # Its goal is to work out where it is, then navigate as quickly as possible to all four of the other
 # four marked waypoints in any order, and finally to return to the waypoint it was originally placed
 # at.
-waypoint0 = [(180,30), (180,54), (138,54), (138,168)]
-waypoint1 = [(180,54), (138,54), ( 84,30), (138,168)]
-waypoint2 = [(180,30),  (84,30), (138,54), (138,168)]
-waypoint3 = [(180,54), (180,30),  (84,30), (138,168)]
-waypoint4 = [(138,54), (180,54), (180,30),   (84,30)]
+# feel free to change below if you find a more optimal route
+    # 1 ->     2     ->   3    ->    4     ->   5   ->   1
+waypoint1 = [(180,30), (180,54),  (138,54), (138,168),  (84,30)]
+    # 2 ->     3     ->   4    ->    5     ->   1   ->   2
+waypoint2 = [(180,54), (138,54), (138,168),   (84,30), (180,30)]
+    # 3 ->     2     ->   1    ->    5     ->   4   ->   3
+waypoint3 = [(180,30),  (84,30), (138,168),  (138,54), (180,54)]
+    # 4 ->     3     ->   2    ->    1     ->   5   ->   4
+waypoint4 = [(180,54), (180,30),   (84,30), (138,168), (138,54)]
+    # 5 ->     4     ->   3    ->    2     ->   1   ->   5
+waypoint5 = [(138,54), (180,54), (180,30),   (84,30), (138,168)]
 
-waypoint_set = [waypoint0, waypoint1, waypoint2, waypoint3, waypoint4]
+waypoint_set = [waypoint1, waypoint2, waypoint3, waypoint4, waypoint5]
 
 #Follow pre-planned route for each differnt location
-for x,y in waypoint_set[idx]:
+for x,y in waypoint_set[idx+1]:
     #print "What am I doing?: Navigate to waypoint"
     navigateToWaypoint(x,y)
     #sleep for 1s to show L01 has corrrectly located the point

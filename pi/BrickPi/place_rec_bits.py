@@ -120,7 +120,8 @@ def compare_signatures(ls1, ls2):
     a2 = make_histogram(ls2)
     # sum of differences squared
     for i in range(len(a1)):
-        dist += (a1[i]-a2[i])**2
+        # /a2[i] - chi-square distance
+        dist += ((a1[i]-a2[i])**2)/a2[i]
     return dist
 
 # angle variant - pass in arrays
@@ -214,16 +215,16 @@ def recognize_location():
 # Then, either learn a location, until all the locations are learned, or try to
 # recognize one of them, if locations have already been learned.
 
-signatures = SignatureContainer(5)
-#signatures.delete_loc_files()
+# signatures = SignatureContainer(5)
+# #signatures.delete_loc_files()
 
-for i in range(5):
-   print "Place the robot at the waypoint."
-   ans = "n"
-   while ans != "y":
-      ans = input("Ready? y/n\n")
+# for i in range(5):
+#    print "Place the robot at the waypoint."
+#    ans = "n"
+#    while ans != "y":
+#       ans = input("Ready? y/n\n")
 
-   learn_location()
+#    learn_location()
 
 # print "Now place robot in position for matching"
 # ans = "N"

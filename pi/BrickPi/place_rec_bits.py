@@ -101,9 +101,15 @@ def characterize_location(ls):
     ls.sig[0] = read_sonar()
     L01.left_90(4) # rotate 5 deg for next reading
     # time.sleep(0.05)
-    for i in range (1,72):
+    for i in range (1,46):
         ls.sig[i] = read_sonar()
         time.sleep(0.05)
+    # slower
+    # for i in range(len(ls.sig)):
+    #     # read
+    #     ls.sig[i] = read_sonar()
+    #     L01.left_90(0.05555555555) # rotate 5 deg for next reading
+    #     time.sleep(0.3)
 
 def make_histogram(x): #take a LocationSignature in distance/angle space, and returns a LocationSignature in frequency/distance space
 	# distance will be discretised into chunks of 8cm
@@ -121,7 +127,10 @@ def compare_signatures(ls1, ls2):
     # sum of differences squared
     for i in range(len(a1)):
         # /a2[i] - chi-square distance
-        dist += ((a1[i]-a2[i])**2)/a2[i]
+        if a2[i] == 0:
+            dist += ((a1[i]-a2[i])**2)/1
+        else:
+            dist += ((a1[i]-a2[i])**2)/a2[i]
     return dist
 
 # angle variant - pass in arrays
@@ -154,7 +163,7 @@ def find_rotation(obs, pred):
     if matching_angle > 180:
         matching_angle -= 360
 
-    return matching_angle
+    return -matching_angle
 
 
 # This function characterizes the current location, and stores the obtained 

@@ -215,7 +215,7 @@ def recognize_location():
 # Then, either learn a location, until all the locations are learned, or try to
 # recognize one of them, if locations have already been learned.
 
-# signatures = SignatureContainer(5)
+signatures = SignatureContainer(5)
 # #signatures.delete_loc_files()
 
 # for i in range(5):
